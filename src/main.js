@@ -165,7 +165,6 @@ module.exports.loop = function () {
             goal = findJob(creep, room);
             creep.newGoal = goal;
         }
-        room.goals[goal] = (room.goals[goal] || 0) + 1;
     }
     
     for (var name in sectors) {
