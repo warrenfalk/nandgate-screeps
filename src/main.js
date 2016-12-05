@@ -106,24 +106,19 @@ module.exports.loop = function () {
     console.log("----- (testing grunt)");
     global.build = (id) => buildGoal.addBuildPriority(room, id);
     
+    // Collect stats on all the rooms
     RoomStats.run();
 
+    // Initialize all creep sectors
     for (let sectorName in sectors) {
         let sector = sectors[sectorName];
         sector.init && sector.init();
     }
 
+    // Run every sector
     for (var name in Game.rooms) {
         let room = Game.rooms[name];
         Tower.run(room);
-        room.goals = {};
-        room.assign = {
-            upgraders: room.ticksToDowngrade < 1000 ? 1 : 0,
-            supplyRatio: 0,
-            buildRatio: 50,
-            upgradeRatio: 20,
-        }
-        // TODO: move this outside of the room, and all run with no args
         for (let sectorName in sectors) {
             let sector = sectors[sectorName];
             sector.run && sector.run(room);
@@ -186,29 +181,6 @@ module.exports.loop = function () {
                 room.creepRequests.push(request.creep);
             })
         }
-    }
-    
-    for (var name in Game.rooms) {
-        var room = Game.rooms[name];
-        let totals = room.assign.supplyRatio + room.assign.upgradeRatio + room.assign.buildRatio;
-        let buildRatio = room.assign.buildRatio / totals;
-        let supplyRatio = room.assign.supplyRatio / totals;
-        let upgradeRatio = room.assign.upgradeRatio / totals;
-        let buildHave = room.goals.build || 0;
-        let supplyHave = room.goals.supply || 0;
-        let upgradeHave = room.goals.upgrade || 0;
-        let dispenseHave = room.goals.dispense || 0;
-        let totalHave = buildHave + supplyHave + upgradeHave + dispenseHave;
-        let buildWant = buildRatio * totalHave - buildHave;
-        let supplyWant = supplyRatio * totalHave - supplyHave;
-        let upgradeWant = upgradeRatio * totalHave - upgradeHave;
-        let totalWant = buildWant + supplyWant + upgradeWant;
-        let buildGet = (buildWant / totalWant) * dispenseHave;
-        let supplyGet = (supplyWant / totalWant) * dispenseHave;
-        let upgradeGet = (upgradeWant / totalWant) * dispenseHave;
-        room.assign.build = buildGet;
-        room.assign.supply = supplyGet;
-        room.assign.upgrade = upgradeGet;
     }
     
     // calculate the total stored energy
