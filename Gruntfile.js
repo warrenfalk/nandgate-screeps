@@ -1,6 +1,6 @@
 "use strict";
 let password;
-try { password = require('./password') } catch(e) {}
+try { password = require('./password.json') } catch(e) { console.error("Create password.json"); }
 
 module.exports = function(grunt) {
  
