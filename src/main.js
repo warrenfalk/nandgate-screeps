@@ -103,7 +103,7 @@ function mineWith(creep, xmine, ymine, xrenew, yrenew, mine) {
 }
 
 module.exports.loop = function () {
-    console.log("-----");
+    console.log("----- (testing grunt)");
     global.build = (id) => buildGoal.addBuildPriority(room, id);
     
     RoomStats.run();
