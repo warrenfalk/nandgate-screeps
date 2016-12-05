@@ -75,8 +75,6 @@ const Ferry = {
             // TODO: evade invaders
             creep.moveTo(route.unloadPos);
         }
-        if (route.paused)
-            return;
         if (!creep.carryCapacity) {
             console.log("Creep",creep.name,"without carry capacity assigned to ferry? maybe damaged");
             let spawn = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})
@@ -121,6 +119,8 @@ const Ferry = {
             }
         }
         else {
+            if (route.paused)
+                return;
             if (creep.pos.x == route.loadPos.x && creep.pos.y == route.loadPos.y && (!route.loadPos.room || route.loadPos.room == room.name)) {
                 let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
                 let resource = resources && resources[0];
