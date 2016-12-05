@@ -1,0 +1,16 @@
+{
+  "name": "nandgate-screeps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "false"
+  },
+  "author": "Warren Falk <warren@warrenfalk.com>",
+  "license": "MIT",
+  "dependencies": {
+    "grunt": "^1.0.1",
+    "grunt-screeps": "^1.2.1",
+    "lodash": "^4.17.2"
+  }
+}
