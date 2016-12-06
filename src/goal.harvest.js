@@ -34,13 +34,13 @@ module.exports = {
         sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER) && s.store.energy > 0})
         if (sources.length) {
             let container = sources[0];
-            if (OK === creep.withdraw(container, RESOURCE_ENERGY, amount))
+            if (OK === creep.withdraw(container, RESOURCE_ENERGY))
                 return;
         }
         sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_STORAGE) && s.store.energy > 0})
         if (sources.length) {
             let storage = sources[0];
-            if (OK === creep.withdraw(storage, RESOURCE_ENERGY, amount))
+            if (OK === creep.withdraw(storage, RESOURCE_ENERGY))
                 return;
         }
         // nothing in range, let's travel
