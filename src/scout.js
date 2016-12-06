@@ -49,9 +49,9 @@ const ScoutSector = {
                     let spawn = Game.spawns[spawnName];
                     let route = Game.map.findRoute(spawn.room, scout.flag.pos.roomName);
                     if (!closest || closest.distance > route.length)
-                        closest = {distance: route.length, spawn: spawn};
+                        closest = {distance: route.length, room: spawn.room};
                 }
-                console.log("scout", name, "requesting creep from spawn", closest.spawn.name);
+                console.log("scout", name, "requesting creep from room", closest.room.name);
             }
         }
     },
