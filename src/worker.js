@@ -1,4 +1,10 @@
 "use strict";
+var harvestGoal = require('goal.harvest');
+var buildGoal = require('goal.build');
+var supplyGoal = require('goal.supply');
+var upgradeGoal = require('goal.upgrade');
+var towerGoal = require('goal.tower');
+
 
 const WorkerSector = {
 	init: function() {
