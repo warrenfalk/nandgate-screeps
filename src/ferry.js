@@ -131,9 +131,15 @@ const Ferry = {
                     // creep.moveTo(route.unloadPos);
                 }
                 else {
-                    let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE)})
+                    let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE || (s.owner && !s.my && (s.store || s.energy)))})
                     let capacity = creep.carryCapacity - carry;
                     containers.forEach(container => {
+                        if (container.energy) {
+                            let amount = Math.min(capacity, container.energy)
+                            if (creep.withdraw(container, RESOURCE_ENERGY, amount))
+                                capacity -= amount;
+                        }
+                            
                         for (let resourceType in container.store) {
                             let amount = Math.min(capacity, container.store[resourceType])
                             if (creep.withdraw(container, resourceType, amount))
