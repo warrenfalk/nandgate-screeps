@@ -29,7 +29,6 @@ const ScoutSector = {
         }
         let scout = scouts[name];
         scout.creep = creep;
-
     },
     employ: function(creep) {
         let name = creep.memory.scout;
@@ -43,6 +42,12 @@ const ScoutSector = {
         for (let name in scouts) {
             let scout = scouts[name];
             if (!scout.creep) {
+                if (unemployed.length) {
+                    let creep = unemployed.pop();
+                    creep.memory.scout = name;
+                    console.log(creep.name, "=> scout", name);
+                    return;
+                }
                 // find the closest spawn
                 let closest;
                 for (var spawnName in Game.spawns) {
