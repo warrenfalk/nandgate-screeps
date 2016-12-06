@@ -58,6 +58,27 @@ const WorkerSector = {
             goal = findJob(creep, room);
             creep.newGoal = goal;
         }
+
+        goal = creep.newGoal || creep.memory.goal;
+        if (goal == 'dispense') {
+            goal =
+                (room.invaders && room.invaders.length && room.towers.length && room.towerEnergy < 500)
+                    ? 'tower'
+                    : (room.controller.ticksToDowngrade < 3300)
+                        ? 'upgrade'
+                        : (creep.room.mySpawns.length && creep.room.energyAvailable < creep.room.energyCapacityAvailable)
+                            ? 'supply'
+                            : (buildGoal.firstBuildPriority(creep.room))
+                                ? 'build'
+                                : (creep.room.find(FIND_CONSTRUCTION_SITES).length)
+                                    ? 'build'
+                                    : 'upgrade';
+            console.log(room.name,'assigning', goal);
+            if (creep.newGoal)
+                creep.newGoal = goal;
+            else
+                creep.memory.goal = goal;
+        }
 	},
 	employ: function(creep) {
         let goal = creep.memory.goal;
