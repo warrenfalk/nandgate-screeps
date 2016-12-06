@@ -16,67 +16,33 @@ module.exports = {
 
         let carry = _.sum(creep.carry);
         let capacity = creep.carryCapacity - carry;
+
         let source;
         let sources;
         sources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r => r.resourceType == RESOURCE_ENERGY})
         if (sources.length) {
-            sources.forEach(dropped => {
-                if (capacity > 0) {
-                    let result = creep.pickup(dropped);
-                    if (OK === result) {
-                        carry += dropped.energy;
-                        capacity -= dropped.energy;
-                    }
-                }
-            })
+            let dropped = sources[0];
+            if (OK == creep.pickup(dropped))
+                return;
         }
-        if (!capacity)
-            return;
         sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_LINK) && s.energy > 0})
         if (sources.length) {
-            sources.forEach(link => {
-                if (capacity > 0) {
-                    let amount = Math.min(link.energy, capacity);
-                    let result = creep.withdraw(link, RESOURCE_ENERGY, amount);
-                    if (OK === result) {
-                        carry += amount;
-                        capacity -= amount;
-                    }
-                }
-            })
+            let link = sources[0];
+            if (OK === creep.withdraw(link, RESOURCE_ENERGY))
+                return;
         }
-        if (!capacity)
-            return;
         sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER) && s.store.energy > 0})
         if (sources.length) {
-            sources.forEach(container => {
-                if (capacity > 0) {
-                    let amount = Math.min(container.energy, capacity);
-                    let result = creep.withdraw(container, RESOURCE_ENERGY, amount);
-                    if (OK === result) {
-                        carry += amount;
-                        capacity -= amount;
-                    }
-                }
-            })
+            let container = sources[0];
+            if (OK === creep.withdraw(container, RESOURCE_ENERGY, amount))
+                return;
         }
-        if (!capacity)
-            return;
         sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_STORAGE) && s.store.energy > 0})
         if (sources.length) {
-            sources.forEach(storage => {
-                if (capacity > 0) {
-                    let amount = Math.min(storage.energy, capacity);
-                    let result = creep.withdraw(storage, RESOURCE_ENERGY, amount);
-                    if (OK === result) {
-                        carry += amount;
-                        capacity -= amount;
-                    }
-                }
-            })
+            let storage = sources[0];
+            if (OK === creep.withdraw(storage, RESOURCE_ENERGY, amount))
+                return;
         }
-        if (!capacity)
-            return;
         // nothing in range, let's travel
         let closestStorage = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: storageFilter});
         let closestResource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {filter: r => r.resourceType == RESOURCE_ENERGY});
