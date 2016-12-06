@@ -1,3 +1,4 @@
 password.*
 node_modules/
 *.log
+nandgate-screeps.sublime-workspace
