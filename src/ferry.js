@@ -104,7 +104,7 @@ const Ferry = {
                     });
                     if (containers.length) {
                         containers.forEach(container => {
-                            let capacity = container.storeCapacity - container.store[resourceType];
+                            let capacity = container.storeCapacity - (container.energy || container.store[resourceType]);
                             let amount = Math.min(capacity, remain);
                             if (OK == creep.transfer(container, resourceType, amount))
                                 remain -= amount;
