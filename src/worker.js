@@ -109,7 +109,18 @@ const WorkerSector = {
                 towerGoal.work(creep);
                 break;
         }        
-	}
+	},
+	request: function(makeRequest) {
+		for (let roomName in Game.rooms) {
+			let room = Game.rooms[roomName];
+	        let desiredWork = getDesiredWorkParts(room);
+	        if (room.work < desiredWork) {
+	        	console.log(roomName, "with", (room.work+'of'+desiredWork), "work parts, requesting creep")
+	            //if (room.energyAvailable >= buildSize || room.work == 0) {
+				makeRequest(roomName, {providing:'energy', creep: {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined}});
+	        }
+		}
+	},
 }
 
 module.exports = WorkerSector;

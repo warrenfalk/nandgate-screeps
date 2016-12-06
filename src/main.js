@@ -13,12 +13,15 @@ var RoomStats = require('room-stats');
 var Tower = require('tower');
 var Trap = require('trap');
 
+// The order, here, is currently important
+// this is the order these are processed
+// which means this is also the priority for creep request fulfillment
 const sectors = {
+    worker: worker,
     miner: miner,
     ferry: ferry,
     bootstrap: bootstrap,
     reserve: reserve,
-    worker: worker,
 }
 
 const defaultGoal = 'build';
@@ -180,15 +183,7 @@ module.exports.loop = function () {
             continue;
         //continue;
         let creepRequests = room.creepRequests;
-        let desiredWork = getDesiredWorkParts(room);
         let buildSize =  Math.max(250, room.energyCapacityAvailable - 300);
-        if (room.work < desiredWork) {
-            if (room.energyAvailable >= buildSize || room.work == 0) {
-                let spawned = createCreep(spawn, buildSize, {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined})
-                console.log("Spawned worker", spawned);
-            }
-            continue;
-        }
         if (room.memory.creepRequests && room.memory.creepRequests.length) {
             let request = room.memory.creepRequests.pop();
             let spawned = createCreep(spawn, buildSize, request);
