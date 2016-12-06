@@ -134,7 +134,7 @@ const Ferry = {
                     let capacity = creep.carryCapacity - carry;
                     let miners = creep.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c => c.memory.sector === 'miner' && _.sum(c.carry)})
                     if (miners.length) {
-                        miners.forEach({
+                        miners.forEach(miner => {
                             for (let resourceType in miner.carry) {
                                 let amount = Math.min(capacity, miner.carry[resourceType])
                                 if (OK == miner.transfer(creep, resourceType, amount))
