@@ -7,6 +7,16 @@ function Scout(flag) {
 let scouts;
 let unemployed;
 
+function distanceBetweenRooms(roomName1, roomName2, diagonal){
+    if( roomName1 == roomName2 ) return 0;
+    let posA = roomName1.split(/([N,E,S,W])/);
+    let posB = roomName2.split(/([N,E,S,W])/);
+    let xDif = posA[1] == posB[1] ? Math.abs(posA[2]-posB[2]) : posA[2]+posB[2]+1;
+    let yDif = posA[3] == posB[3] ? Math.abs(posA[4]-posB[4]) : posA[4]+posB[4]+1;
+    if( diagonal ) return Math.max(xDif, yDif); // count diagonal as 1 
+    return xDif + yDif; // count diagonal as 2 
+}
+
 const ScoutSector = {
     init: function() {
         unemployed = [];
@@ -47,7 +57,7 @@ const ScoutSector = {
                 let closest;
                 for (var spawnName in Game.spawns) {
                     let spawn = Game.spawns[spawnName];
-                    let distance = spawn.pos.getRangeTo(scout.flag.pos);
+                    let distance = distanceBetweenRooms(spawn.room.name, scout.flag.pos.roomName, 2);
                     console.log("scout", name, "requesting creep", spawnName, distance);
                     // makeRequest(roomName, {providing:'energy', creep: {parts:[CARRY,MOVE],sector:'ferry',max:350}});
                 }
