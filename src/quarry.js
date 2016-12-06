@@ -19,41 +19,95 @@ const _ = require('lodash');
 function Quarry(flag) {
     this.flag = flag;
     this.carriers = [];
-    this.miner = null;
-    this.construct = null;
+    if (!Memory.quarry)
+        Memory.quarry = {};
+    if (!Memory.quarry[flag.name])
+        Memory.quarry[flag.name] = {};
+    this.memory = Memory.quarry[flag.name];
+    this.path = this.memory.path || this.findPath();
+    this.desiredCarriers = this.path.length
+}
+Quarry.prototype.findPath = function() {
+    // TODO: implement
+    return [];
+}
+Quarry.prototype.stats = function(creep) {
+    const q = creep.memory.quarry;
+    const role = q.role;
+    switch (role) {
+        case 'miner':
+            if (this.miner)
+                fire(creep);
+            else
+                this.miner = creep;
+            break;
+        case 'carrier':
+            this.carriers.push(creep);
+            break;
+        case 'construct':
+            if (this.construct)
+                fire(creep);
+            else
+                this.construct = creep;
+            break;
+    }
 }
 Quarry.prototype.employ = function(creep) {
-    let workParts = creep.getActiveBodyparts(WORK);
-    let carryParts = creep.getActiveBodyparts(CARRY);
-    if (workParts > 0) {
-        if (!this.miner) {
-            this.miner = creep;
-        }
-        else if (!this.construct && (carryParts || this.miner.getActiveBodyparts(CARRY))) {
-            this.construct = creep;
-            this.balance();
-        }
-        else {
-            // this quarry is full, or this guy is unqualified so this guy is unemployed
-            unemployed.push(creep);
-            delete creep.memory.quarry;
-        }
+    const q = creep.memory.quarry;
+    const role = q.role;
+    switch (role) {
+        case 'miner':
+            this.employMiner(creep);
+            break;
+        case 'carrier':
+            this.employCarrier(creep);
+            break;
+        case 'construct':
+            this.employConstructor(creep);
+            break;
     }
-    else if (carryParts > 0) {
-        this.carriers.push(creep);
-    }
-    else {
-        unemployed.push(creep);
-        delete creep.memory.quarry;
+}
+Quarry.prototype.employMiner = function(creep) {
+    if (creep.pos.getRangeTo(quarry.flag) != 0) {
+        creep.moveTo(quarry.flag);
         return;
     }
+    let sources = creep.pos.findInRange(FIND_SOURCES, 1, {filter: s => s.energy > 0});
+    let source = sources && sources[0];
+    if (source) {
+        creep.harvest(source);
+    }
+    else {
+        let minerals = creep.pos.findInRange(FIND_MINERALS, 1);
+        let mineral = minerals && minerals[0];
+        if (mineral) {
+            let result = creep.harvest(mineral);
+            console.log("harvest mineral",result);
+        }
+    }
+}
+Quarry.prototype.employCarrier = function(creep) {
+
+}
+Quarry.prototype.employConstructor = function(creep) {
+
+}
+Quarry.prototype.findOrigin = function() {
+    let closest;
+    for (var spawnName in Game.spawns) {
+        let spawn = Game.spawns[spawnName];
+        let route = Game.map.findRoute(spawn.room, quarry.flag.pos.roomName);
+        if (!closest || closest.distance > route.length)
+            closest = {distance: route.length, room: spawn.room};
+    }
+    return spawn.room.name;
 }
 Quarry.prototype.balance = function() {
     // if the constructor has no carry, then swap them
     if (this.construct.getActiveBodyparts(CARRY) == 0)
         this.swap();
     // the one with the closest to 5 work parts should be the miner
-    if (Math.abs(5 - this.miner.getActiveBodyparts(WORK)) > Math.abs(5 - this.construct.getActiveBodyParts(CONSTRUCT)))
+    if (Math.abs(5 - this.miner.getActiveBodyparts(WORK)) > Math.abs(5 - this.construct.getActiveBodyparts(CONSTRUCT)) && this.miner.getActiveBodyparts(CARRY) > 0)
         this.swap();
 }
 Quarry.prototype.swap = function() {
@@ -67,7 +121,11 @@ let unemployed;
 
 const QuarrySector = {
     init: function() {
-        unemployed = [];
+        unemployed = {
+            miner: [],
+            carrier: [],
+            construct: []
+        };
         quarryTeams = {};
         for (let name in Game.flags) {
             let flag = Game.flags[name];
@@ -82,45 +140,51 @@ const QuarrySector = {
 
     },
     stats: function(creep) {
-        let name = creep.memory.quarry;
+        const q = creep.memory.quarry;
+        let name = q.name;        
         if (!name) {
-            unemployed.push(creep);
+            unemployed[q.role].push(creep);
             return;
         }
-        let quarry = quarryTeams[name];
-        quarry.employ(creep);
+        quarry.stats(creep);
     },
     employ: function(creep) {
-        let name = creep.memory.quarry;
+        const q = creep.memory.quarry;
+        let name = q.name;
         if (!name)
             return;
         let quarry = quarryTeams[name];
-        if (creep.pos.getRangeTo(quarry.flag) != 0)
-            creep.moveTo(quarry.flag);
+        quarry.employ(creep);
     },
     request: function(makeRequest) {
         for (let name in quarryTeams) {
             let quarry = quarryTeams[name];
-            if (!quarry.creep) {
-                if (unemployed.length) {
-                    let creep = unemployed.pop();
-                    creep.memory.quarry = name;
-                    console.log(creep.name, "=> quarry", name);
-                    return;
-                }
-                // find the closest spawn
-                let closest;
-                for (var spawnName in Game.spawns) {
-                    let spawn = Game.spawns[spawnName];
-                    let route = Game.map.findRoute(spawn.room, quarry.flag.pos.roomName);
-                    if (!closest || closest.distance > route.length)
-                        closest = {distance: route.length, room: spawn.room};
-                }
-                console.log("quarry", name, "requesting creep from room", closest.room.name);
-                makeRequest(closest.room.name, {providing:'quarry', creep: {assembly:[WORK,CARRY,MOVE,MOVE],sector:'scout'}});
+            if (!quarry.miner) {
+                recruit(makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
+            }
+            else if (!quarry.construct) {
+                recruit(makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE]});
+            }
+            else if (quarry.carriers.length < quarry.desiredCarriers) {
+                recruit(makeRequest, 'carrier', {assembly: [CARRY,CARRY,CARRY,MOVE]})
             }
         }
     },
+}
+
+function recruit(makeRequest, role, specs) {
+    if (unemployed['role'].length) {
+        let creep = unemployed['role'].pop();
+        creep.memory.quarry.name = name;
+        console.log(creep.name, "=> quarry", name);
+        return;
+    }
+    let room = quarry.findOrigin();
+    console.log("quarry", name, "requesting", role, "from room", room);
+    makeRequest(room, {
+        providing:'energy',
+        creep: Object.assign({}, specs, {sector: 'quary', memory: {role: role}}
+    });
 }
 
 module.exports = QuarrySector;
