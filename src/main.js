@@ -38,35 +38,37 @@ let partCost = {
 function createCreep(spawn, energy, specs) {
     if (specs && specs.max && specs.max < energy)
         energy = specs.max;
-    let partRatios = specs.parts;
-    let sector = specs.sector;
-    let parts = {
-        [MOVE]: [],
-        [WORK]: [],
-        [CARRY]: [],
-        [ATTACK]: [],
-        [RANGED_ATTACK]: [],
-        [HEAL]: [],
-        [CLAIM]: [],
-        [TOUGH]: [],
-    }
     if (energy > spawn.room.energyAvailable)
         energy = spawn.room.energyAvailable;
-    while (energy > 0) {
-        for (let i = 0; i < partRatios.length; i++) {
-            let partType = partRatios[i];
-            let cost = partCost[partType];
-            energy -= cost;
-            if (energy < 0)
-                break;
-            parts[partType].push(partType);
+    let assembly = specs.assembly;
+    if (!assembly) {
+        let partRatios = specs.parts;
+        let parts = {
+            [MOVE]: [],
+            [WORK]: [],
+            [CARRY]: [],
+            [ATTACK]: [],
+            [RANGED_ATTACK]: [],
+            [HEAL]: [],
+            [CLAIM]: [],
+            [TOUGH]: [],
         }
+        while (energy > 0) {
+            for (let i = 0; i < partRatios.length; i++) {
+                let partType = partRatios[i];
+                let cost = partCost[partType];
+                energy -= cost;
+                if (energy < 0)
+                    break;
+                parts[partType].push(partType);
+            }
+        }
+        assembly = parts[TOUGH].concat(parts[CLAIM], parts[HEAL], parts[ATTACK], parts[RANGED_ATTACK], parts[ATTACK], parts[WORK], parts[CARRY], parts[MOVE])
     }
-    let assembly = parts[TOUGH].concat(parts[CLAIM], parts[HEAL], parts[ATTACK], parts[RANGED_ATTACK], parts[ATTACK], parts[WORK], parts[CARRY], parts[MOVE])
     console.log(JSON.stringify(assembly));
     let mem = {};
-    if (sector)
-        mem.sector = sector;
+    if (specs.sector)
+        mem.sector = specs.sector;
     return spawn.createCreep(assembly, mem);
 }
 
