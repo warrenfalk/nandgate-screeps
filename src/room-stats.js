@@ -11,7 +11,7 @@ function getStats(room) {
     room.towerEnergy = room.towers.reduce((total,tower) => total + tower.energy, 0);
     room.hasWorkingTower = room.towers.some(t => t.energy > 0)
     room.stores = room.find(FIND_STRUCTURES, {filter: s => isStorage(s)});
-    room.storedEnergy = room.stores.reduce((total,s) => total + s.store[RESOURCE_ENERGY], 0);
+    room.storedEnergy = room.stores.reduce((total,s) => total + (s.store.energy||0) + (s.energy||0), 0);
     room.isFriendly = room.mySpawns.length > 0;
     // create queues
     room.creepRequests = [];
