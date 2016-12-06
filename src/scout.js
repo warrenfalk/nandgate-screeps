@@ -28,7 +28,12 @@ const ScoutSector = {
             return;
         }
         let scout = scouts[name];
-        scout.creep = creep;
+        if (scout) 
+            scout.creep = creep;
+        else {
+            delete creep.memory.scout;
+            unemployed.push(creep);
+        }
     },
     employ: function(creep) {
         let name = creep.memory.scout;
