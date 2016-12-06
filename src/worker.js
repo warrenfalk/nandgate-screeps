@@ -27,11 +27,18 @@ const WorkerSector = {
 
 	},
 	run: function(room) {
-        if (room.isFriendly)
+        if (room.isFriendly) {
             console.log(room.name,"work parts have/desired",room.work+"/"+getDesiredWorkParts(room));
+	        room.workerStats = {
+	        	work: 0,
+	        }
+        }
 	},
 	stats: function(creep) {
         let room = creep.room;
+        if (room.isFriendly) {
+        	room.workerStats.work += (creep.spawning || creep.ticksToLive > 30) && creep.getActiveBodyparts(WORK);
+        }
         let goal = creep.memory.goal;
         let complete = !goal;
         switch (goal) {
@@ -117,7 +124,7 @@ const WorkerSector = {
 	        if (!spawn)
 	            continue;
 	        let desiredWork = getDesiredWorkParts(room);
-	        if (room.work < desiredWork) {
+	        if (room.workerStats.work < desiredWork) {
 	        	console.log(roomName, "with", (room.work+' of '+desiredWork), "work parts, requesting creep")
 	            //if (room.energyAvailable >= buildSize || room.work == 0) {
 				makeRequest(roomName, {providing:'energy', creep: {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined}});
