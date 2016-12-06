@@ -1,6 +1,7 @@
 /*
     Miner.create({id: "miner1", loc: "flag1"});
 */
+const _ = require('lodash');
 
 let miners = {};
 let unemployed = [];
@@ -133,10 +134,17 @@ const Miners = {
         containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
             s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
             || ((s.structureType === STRUCTURE_LINK) && s.energy < s.energyCapacity)});
-        let dropped = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 0);
-        if (dropped.length && containers.length) {
-            creep.pickup(dropped[0]);
-        }
+        let dropped = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+
+        let carry = _.sum(creep.carry);
+        let unusedCarry = creep.carryCapacity - carry;
+
+        dropped.forEach(d => {
+            if (unusedCarry > 0) {
+                creep.pickup(d);
+                unusedCarry -= d.energy;
+            }
+        })
         for (var resourceType in creep.carry) {
             let amount = creep.carry[resourceType];
             if (amount) {
@@ -144,9 +152,6 @@ const Miners = {
                     containers.forEach(container => {
                         creep.transfer(container, resourceType);
                     })
-                }
-                else {
-                    creep.drop(resourceType);
                 }
             }
         }
