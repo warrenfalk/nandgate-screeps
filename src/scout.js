@@ -1,4 +1,4 @@
-const _ = require('loadash');
+const _ = require('lodash');
 
 function Scout(flag) {
     this.flag = flag;
