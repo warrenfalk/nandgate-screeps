@@ -1,2 +1,3 @@
 password.*
 node_modules/
+*.log

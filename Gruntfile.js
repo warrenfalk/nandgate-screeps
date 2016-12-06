@@ -5,8 +5,45 @@ try { password = require('./password.json') } catch(e) { console.error("Create p
 module.exports = function(grunt) {
  
     grunt.loadNpmTasks('grunt-screeps');
+    grunt.loadNpmTasks('grunt-git');
  
     grunt.initConfig({
+        gitadd: {
+            src: {
+                options: {
+                },
+                files: {
+                    src: ['src']
+                },
+            },
+        },
+        gitcheckout: {
+            src: {
+                options: {
+                    branch: 'deployed',
+                    overwrite: true,
+                }
+            }
+        },
+        gitcommit: {
+            src: {
+                options: {
+                    message: 'Update',
+                },
+                files: {
+                    src: ['src']
+                },
+            }
+        },
+        gitpush: {
+            src: {
+                options: {
+                    remote: 'origin',
+                    branch: 'deployed',
+                    force: 'true'
+                }
+            }
+        },
         screeps: {
             options: {
                 email: 'warren@warrenfalk.com',
@@ -19,4 +56,6 @@ module.exports = function(grunt) {
             }
         }
     });
+
+    grunt.registerTask('send', ['gitadd:src', 'gitcheckout:src', 'gitcommit:src', 'gitpush:src', 'screeps'])
 }
