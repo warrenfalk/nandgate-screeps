@@ -8,6 +8,7 @@ var ferry = require('ferry');
 var miner = require('miner');
 var bootstrap = require('bootstrap');
 var reserve = require('reserve');
+var worker = require('worker');
 var RoomStats = require('room-stats');
 var Tower = require('tower');
 var Trap = require('trap');
@@ -17,6 +18,7 @@ const sectors = {
     ferry: ferry,
     bootstrap: bootstrap,
     reserve: reserve,
+    worker: worker,
 }
 
 const defaultGoal = 'build';
@@ -132,38 +134,11 @@ module.exports.loop = function () {
     for (var name in Game.creeps) {
         let creep = Game.creeps[name];
         if (creep.memory.sector) {
-            let sector = sectors[creep.memory.sector];
+            let sector = sectors[creep.memory.sector || 'worker'];
             if (sector) {
                 sector.stats(creep);
                 continue;
             }
-        }
-        let room = creep.room;
-        let goal = creep.memory.goal;
-        let complete = !goal;
-        switch (goal) {
-            case 'harvest':
-                complete = harvestGoal.isComplete(creep);
-                break;
-            case 'supply':
-                complete = supplyGoal.isComplete(creep);
-                break;
-            case 'build':
-                complete = buildGoal.isComplete(creep);
-                break;
-            case 'upgrade':
-                complete = upgradeGoal.isComplete(creep);
-                break;
-            case 'tower':
-                complete = towerGoal.isComplete(creep);
-                break;
-            case 'manual':
-                complete = false;
-                break;
-        }
-        if (complete) {
-            goal = findJob(creep, room);
-            creep.newGoal = goal;
         }
     }
     
