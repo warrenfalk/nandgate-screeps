@@ -121,7 +121,7 @@ const Ferry = {
             else {
                 // we are empty, look around for dropped resources and pick them up
                 let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
-                let resource = resources && resource[0];
+                let resource = resources && resources[0];
                 if (resource) {
                     creep.pickup(resource);
                 }
