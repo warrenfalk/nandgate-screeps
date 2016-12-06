@@ -24,17 +24,6 @@ const sectors = {
     reserve: reserve,
 }
 
-const defaultGoal = 'build';
-
-function findJob(creep, room) {
-    if (creep.carry.energy < creep.carryCapacity) {
-        return 'harvest'
-    }
-    else {
-        return 'dispense'
-    }
-}
-
 let partCost = {
     [MOVE]: 50,
     [WORK]: 100,
@@ -79,34 +68,6 @@ function createCreep(spawn, energy, specs) {
     if (sector)
         mem.sector = sector;
     return spawn.createCreep(assembly, mem);
-}
-
-function mineWith(creep, xmine, ymine, xrenew, yrenew, mine) {
-    if (!creep)
-        return;
-    if (Game.spawns.Alpha.renewCreep(creep) == OK || creep.ticksToLive < 300) {
-        let renewPos = Game.spawns.Alpha.room.getPositionAt(xrenew, yrenew);
-        if (creep.room.find(FIND_CREEPS).length > 1)
-            creep.moveTo(renewPos)
-    }
-    else {
-        let mineObj = Game.getObjectById(mine);
-        let station = xmine instanceof Flag ? xmine.pos : mineObj.room.getPositionAt(xmine, ymine);
-        creep.moveTo(station);
-        creep.memory.goal = 'manual';
-        if (mineObj) {
-            creep.harvest(mineObj);
-            containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] < s.storeCapacity});
-            if (containers.length) {
-                containers.forEach(container => {
-                    creep.transfer(container, RESOURCE_ENERGY);
-                })
-            }
-            else {
-                creep.drop(RESOURCE_ENERGY);
-            }
-        }
-    }
 }
 
 module.exports.loop = function () {
@@ -207,11 +168,6 @@ module.exports.loop = function () {
             others.forEach(other => other.transferEnergy(link));
         }
     }
-    
-    //mineWith(Game.creeps.Kylie, 14, 34, 27, 27, '57ef9d6c86f108ae6e60dbdd');
-    //mineWith(Game.creeps.Abigail, 42, 33, 29, 27, '57ef9d6c86f108ae6e60dbdc');
-    //mineWith(Game.creeps.Kylie, Game.flags.Mine, null, 27, 27, '57ef9d6c86f108ae6e60dbda');
-
     
     creep = Game.creeps.Julia;
     //creep.moveTo(34,20)
