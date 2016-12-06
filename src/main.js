@@ -9,6 +9,7 @@ var miner = require('miner');
 var bootstrap = require('bootstrap');
 var reserve = require('reserve');
 var worker = require('worker');
+var scout = require('scout');
 var RoomStats = require('room-stats');
 var Tower = require('tower');
 var Trap = require('trap');
@@ -22,6 +23,7 @@ const sectors = {
     ferry: ferry,
     bootstrap: bootstrap,
     reserve: reserve,
+    scout: scout,
 }
 
 let partCost = {
