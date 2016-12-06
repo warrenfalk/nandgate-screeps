@@ -35,7 +35,7 @@ const ScoutSector = {
         if (!name)
             return;
         let scout = scouts[name];
-        if (creep.getRangeTo(scout.flag) != 0)
+        if (creep.pos.getRangeTo(scout.flag) != 0)
             creep.moveTo(scout.flag);
     },
     request: function(makeRequest) {
