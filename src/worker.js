@@ -31,7 +31,6 @@ const WorkerSector = {
 	        room.workerStats = {
 	        	work: 0,
 	        }
-            console.log(room.name,"work parts have/desired",room.workerStats.work+"/"+getDesiredWorkParts(room));
         }
 	},
 	stats: function(creep) {
@@ -123,6 +122,7 @@ const WorkerSector = {
 	        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})[0];
 	        if (!spawn)
 	            continue;
+            console.log(room.name,"work parts have/desired",room.workerStats.work+"/"+getDesiredWorkParts(room));
 	        let desiredWork = getDesiredWorkParts(room);
 	        if (room.workerStats.work < desiredWork) {
 	        	console.log(roomName, "with", (room.workerStats.work+' of '+desiredWork), "work parts, requesting creep")
