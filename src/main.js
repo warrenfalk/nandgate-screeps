@@ -133,12 +133,10 @@ module.exports.loop = function () {
     // assign to them a provisional new job
     for (var name in Game.creeps) {
         let creep = Game.creeps[name];
-        if (creep.memory.sector) {
-            let sector = sectors[creep.memory.sector || 'worker'];
-            if (sector) {
-                sector.stats(creep);
-                continue;
-            }
+        let sector = sectors[creep.memory.sector || 'worker'];
+        if (sector) {
+            sector.stats(creep);
+            continue;
         }
     }
     
@@ -170,12 +168,9 @@ module.exports.loop = function () {
     for (var name in Game.creeps) {
         let creep = Game.creeps[name];
         let room = creep.room;
-        if (creep.memory.sector) {
-            let sector = sectors[creep.memory.sector];
-            if (sector) {
-                sector.stats(creep);
-                continue;
-            }
+        let sector = sectors[creep.memory.sector];
+        if (sector) {
+            continue;
         }
         let goal = creep.newGoal || creep.memory.goal;
         if (goal == 'dispense') {
