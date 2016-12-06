@@ -44,9 +44,9 @@ const ScoutSector = {
             let scout = scouts[name];
             if (!scout.creep) {
                 // find the closest spawn
-                for (var name in Game.spawns) {
-                    let spawn = Game.spawns[name];
-                    console.log("scout", name, "requesting creep", name);
+                for (var spawnName in Game.spawns) {
+                    let spawn = Game.spawns[spawnName];
+                    console.log("scout", name, "requesting creep", spawnName);
                     // makeRequest(roomName, {providing:'energy', creep: {parts:[CARRY,MOVE],sector:'ferry',max:350}});
                 }
             }
