@@ -23,20 +23,20 @@ let getDesiredWorkParts = (room) => 5 + Math.ceil(room.storedEnergy * 0.002);
 
 
 const WorkerSector = {
-	init: function() {
+    init: function() {
 
-	},
-	run: function(room) {
+    },
+    run: function(room) {
         if (room.isFriendly) {
-	        room.workerStats = {
-	        	work: 0,
-	        }
+            room.workerStats = {
+                work: 0,
+            }
         }
-	},
-	stats: function(creep) {
+    },
+    stats: function(creep) {
         let room = creep.room;
         if (room.isFriendly) {
-        	room.workerStats.work += (creep.spawning || creep.ticksToLive > 30) && creep.getActiveBodyparts(WORK);
+            room.workerStats.work += (creep.spawning || creep.ticksToLive > 30) && creep.getActiveBodyparts(WORK);
         }
         let goal = creep.memory.goal;
         let complete = !goal;
@@ -85,8 +85,8 @@ const WorkerSector = {
             else
                 creep.memory.goal = goal;
         }
-	},
-	employ: function(creep) {
+    },
+    employ: function(creep) {
         let goal = creep.memory.goal;
         switch (goal) {
             case 'harvest':
@@ -115,22 +115,22 @@ const WorkerSector = {
                 towerGoal.work(creep);
                 break;
         }        
-	},
-	request: function(makeRequest) {
-		for (let roomName in Game.rooms) {
-			let room = Game.rooms[roomName];
-	        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})[0];
-	        if (!spawn)
-	            continue;
+    },
+    request: function(makeRequest) {
+        for (let roomName in Game.rooms) {
+            let room = Game.rooms[roomName];
+            let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})[0];
+            if (!spawn)
+                continue;
             console.log(room.name,"work parts have/desired",room.workerStats.work+"/"+getDesiredWorkParts(room));
-	        let desiredWork = getDesiredWorkParts(room);
-	        if (room.workerStats.work < desiredWork) {
-	        	console.log(roomName, "with", (room.workerStats.work+' of '+desiredWork), "work parts, requesting creep")
-	            //if (room.energyAvailable >= buildSize || room.work == 0) {
-				makeRequest(roomName, {providing:'energy', creep: {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined}});
-	        }
-		}
-	},
+            let desiredWork = getDesiredWorkParts(room);
+            if (room.workerStats.work < desiredWork) {
+                console.log(roomName, "with", (room.workerStats.work+' of '+desiredWork), "work parts, requesting creep")
+                //if (room.energyAvailable >= buildSize || room.work == 0) {
+                makeRequest(roomName, {providing:'energy', creep: {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined}});
+            }
+        }
+    },
 }
 
 module.exports = WorkerSector;
