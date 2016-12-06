@@ -23,9 +23,6 @@ function getStats(room) {
 
 function calcCreepStats(creep) {
     let room = creep.room;
-    
-    // we should remove these when we build workers as its own sector
-    room.work += !creep.memory.sector && (creep.spawning || creep.ticksToLive > 30) && creep.getActiveBodyparts(WORK);
 }
 
 module.exports = {
