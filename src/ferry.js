@@ -207,6 +207,10 @@ const Ferry = {
         route.unpause();
         return JSON.stringify(route.def);
     },
+    remove: function(id) {
+        delete routes[id];
+        delete Memory.ferryRoutes[id];
+    },
 };
 
 module.exports = Ferry;
