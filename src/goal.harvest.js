@@ -1,8 +1,11 @@
-var Employment = require('employment');
+const _ = require('lodash');
+
+const storageFilter = s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] > 0)
+            || ((s.structureType === STRUCTURE_LINK) && s.energy > 0);
 
 module.exports = {
     isComplete: function(creep) {
-        return creep.carry.energy == creep.carryCapacity;
+        return _.sum(creep.carry) == creep.carryCapacity;
     },
     preCheck: function(creep) {
     },
@@ -10,13 +13,74 @@ module.exports = {
         if (creep.spawning)
             return;
         let memory = creep.memory;
-        let closestStorage = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: 
-            s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] > 0)
-            || ((s.structureType === STRUCTURE_LINK) && s.energy > 0)
-        });
+
+        let carry = _.sum(creep.carry);
+        let capacity = creep.carryCapacity - carry;
+        let source;
+        let sources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r => r.resourceType == RESOURCE_ENERGY})
+        if (sources.length) {
+            sources.forEach(dropped => {
+                if (capacity > 0) {
+                    let result = creep.pickup(dropped);
+                    if (OK === result) {
+                        carry += dropped.energy;
+                        capacity -= dropped.energy;
+                    }
+                }
+            })
+        }
+        if (!capacity)
+            return;
+        let sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_LINK) && s.energy > 0})
+        if (sources.length) {
+            sources.forEach(link => {
+                if (capacity > 0) {
+                    let amount = Math.min(link.energy, capacity);
+                    let result = creep.withdraw(link, RESOURCE_ENERGY, amount);
+                    if (OK === result) {
+                        carry += amount;
+                        capacity -= amount;
+                    }
+                }
+            })
+        }
+        if (!capacity)
+            return;
+        let sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER) && s.store.energy > 0})
+        if (sources.length) {
+            sources.forEach(container => {
+                if (capacity > 0) {
+                    let amount = Math.min(container.energy, capacity);
+                    let result = creep.withdraw(container, RESOURCE_ENERGY, amount);
+                    if (OK === result) {
+                        carry += amount;
+                        capacity -= amount;
+                    }
+                }
+            })
+        }
+        if (!capacity)
+            return;
+        let sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_STORAGE) && s.store.energy > 0})
+        if (sources.length) {
+            sources.forEach(storage => {
+                if (capacity > 0) {
+                    let amount = Math.min(storage.energy, capacity);
+                    let result = creep.withdraw(storage, RESOURCE_ENERGY, amount);
+                    if (OK === result) {
+                        carry += amount;
+                        capacity -= amount;
+                    }
+                }
+            })
+        }
+        if (!capacity)
+            return;
+        // nothing in range, let's travel
+        let closestStorage = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: storageFilter});
         let closestResource = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {filter: r => r.resourceType == RESOURCE_ENERGY});
         let closestSource = creep.pos.findClosestByRange(FIND_SOURCES, {filter: s => s.energy > 0});
-        let source = creep.pos.findClosestByRange([closestStorage, closestResource, closestSource], {filter: x => x});
+        source = creep.pos.findClosestByRange([closestStorage, closestResource, closestSource], {filter: x => x});
         if (source == null) {
             console.log(creep.room.name, "No energy available");
         }
