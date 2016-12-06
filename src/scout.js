@@ -52,6 +52,7 @@ const ScoutSector = {
                         closest = {distance: route.length, room: spawn.room};
                 }
                 console.log("scout", name, "requesting creep from room", closest.room.name);
+                makeRequest(closest.room.name, {providing:'scout', creep: {assembly:[WORK,CARRY,MOVE,MOVE],sector:'scout'}});
             }
         }
     },
