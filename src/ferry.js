@@ -92,11 +92,16 @@ const Ferry = {
         //if (selfRepair(creep))
         //    return;
         let carry = _.sum(creep.carry)
-        if (carry >= creep.carryCapacity) {
-            if (creep.pos.x == route.unloadPos.x && creep.pos.y == route.unloadPos.y && (!route.unloadPos.room || route.unloadPos.room == room.name)) {
+        if (creep.pos.x == route.unloadPos.x && creep.pos.y == route.unloadPos.y && (!route.unloadPos.room || route.unloadPos.room == room.name)) {
+            // we are the unload position
+            if (carry) {
+                // we are carrying, drop everything into available structures
                 for (let resourceType in creep.carry) {
                     let remain = creep.carry[resourceType];
-                    containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity});
+                    containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
+                        s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity)
+                        || (s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity)
+                    });
                     if (containers.length) {
                         containers.forEach(container => {
                             let capacity = container.storeCapacity - container.store[resourceType];
@@ -111,17 +116,25 @@ const Ferry = {
                         // if not, then enable it to move a tick sooner
                         // creep.moveTo(route.loadPos);
                     }
-
                 }
             }
             else {
-                creep.moveTo(route.unloadPos);
+                // we are empty, look around for dropped resources and pick them up
+                let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+                let resource = resources && resource[0];
+                if (resource) {
+                    creep.pickup(resource);
+                }
+                else {
+                    // we are empty, go to the load position
+                    creep.moveTo(route.loadPos);
+                }
             }
         }
-        else {
-            if (route.paused)
-                return;
-            if (creep.pos.x == route.loadPos.x && creep.pos.y == route.loadPos.y && (!route.loadPos.room || route.loadPos.room == room.name)) {
+        else if (creep.pos.x == route.loadPos.x && creep.pos.y == route.loadPos.y && (!route.loadPos.room || route.loadPos.room == room.name)) {
+            // we are at the load position
+            if (carry < creep.carryCapacity) {
+                // we are not full, fill us up
                 let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
                 let resource = resources && resources[0];
                 if (resource) {
@@ -161,7 +174,17 @@ const Ferry = {
                 }
             }
             else {
-                let loadPos = route.loadPos;
+                // we are full, start moving to the unload position
+                creep.moveTo(route.unloadPos);
+            }
+        }
+        else {
+            // we are not at either location
+            // if we are carrying, we should be going to the unload position
+            if (carry) {
+                creep.moveTo(unloadPos);
+            }
+            else {
                 creep.moveTo(loadPos);
             }
         }
