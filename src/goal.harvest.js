@@ -17,7 +17,8 @@ module.exports = {
         let carry = _.sum(creep.carry);
         let capacity = creep.carryCapacity - carry;
         let source;
-        let sources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r => r.resourceType == RESOURCE_ENERGY})
+        let sources;
+        sources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r => r.resourceType == RESOURCE_ENERGY})
         if (sources.length) {
             sources.forEach(dropped => {
                 if (capacity > 0) {
@@ -31,7 +32,7 @@ module.exports = {
         }
         if (!capacity)
             return;
-        let sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_LINK) && s.energy > 0})
+        sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_LINK) && s.energy > 0})
         if (sources.length) {
             sources.forEach(link => {
                 if (capacity > 0) {
@@ -46,7 +47,7 @@ module.exports = {
         }
         if (!capacity)
             return;
-        let sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER) && s.store.energy > 0})
+        sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER) && s.store.energy > 0})
         if (sources.length) {
             sources.forEach(container => {
                 if (capacity > 0) {
@@ -61,7 +62,7 @@ module.exports = {
         }
         if (!capacity)
             return;
-        let sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_STORAGE) && s.store.energy > 0})
+        sources = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_STORAGE) && s.store.energy > 0})
         if (sources.length) {
             sources.forEach(storage => {
                 if (capacity > 0) {
