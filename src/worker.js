@@ -112,10 +112,10 @@ const WorkerSector = {
 	},
 	request: function(makeRequest) {
 		for (let roomName in Game.rooms) {
+			let room = Game.rooms[roomName];
 	        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})[0];
 	        if (!spawn)
 	            continue;
-			let room = Game.rooms[roomName];
 	        let desiredWork = getDesiredWorkParts(room);
 	        if (room.work < desiredWork) {
 	        	console.log(roomName, "with", (room.work+' of '+desiredWork), "work parts, requesting creep")
