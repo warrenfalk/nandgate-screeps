@@ -182,10 +182,10 @@ const Ferry = {
             // we are not at either location
             // if we are carrying, we should be going to the unload position
             if (carry) {
-                creep.moveTo(unloadPos);
+                creep.moveTo(route.unloadPos);
             }
             else {
-                creep.moveTo(loadPos);
+                creep.moveTo(route.loadPos);
             }
         }
     },
