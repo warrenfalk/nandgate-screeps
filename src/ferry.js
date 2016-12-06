@@ -131,21 +131,33 @@ const Ferry = {
                     // creep.moveTo(route.unloadPos);
                 }
                 else {
-                    let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE || (s.owner && !s.my && (s.store || s.energy)))})
                     let capacity = creep.carryCapacity - carry;
-                    containers.forEach(container => {
-                        if (container.energy) {
-                            let amount = Math.min(capacity, container.energy)
-                            if (creep.withdraw(container, RESOURCE_ENERGY, amount))
-                                capacity -= amount;
-                        }
-                            
-                        for (let resourceType in container.store) {
-                            let amount = Math.min(capacity, container.store[resourceType])
-                            if (creep.withdraw(container, resourceType, amount))
-                                capacity -= amount;
-                        }
-                    })
+                    let miners = creep.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c => c.memory.sector === 'miner' && _.sum(c.carry)})
+                    if (miners.length) {
+                        miners.forEach({
+                            for (let resourceType in miner.carry) {
+                                let amount = Math.min(capacity, miner.carry[resourceType])
+                                if (OK == miner.transfer(creep, resourceType, amount))
+                                    capacity -= amount
+                            }
+                        })
+                    }
+                    if (capacity) {
+                        let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE || (s.owner && !s.my && (s.store || s.energy)))})
+                        containers.forEach(container => {
+                            if (container.energy) {
+                                let amount = Math.min(capacity, container.energy)
+                                if (OK == creep.withdraw(container, RESOURCE_ENERGY, amount))
+                                    capacity -= amount;
+                            }
+                                
+                            for (let resourceType in container.store) {
+                                let amount = Math.min(capacity, container.store[resourceType])
+                                if (OK == creep.withdraw(container, resourceType, amount))
+                                    capacity -= amount;
+                            }
+                        })
+                    }
                 }
             }
             else {
