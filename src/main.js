@@ -58,6 +58,8 @@ function createCreep(spawn, energy, specs) {
         [CLAIM]: [],
         [TOUGH]: [],
     }
+    if (energy > spawn.room.energyAvailable)
+        energy = spawn.room.energyAvailable;
     while (energy > 0) {
         for (let i = 0; i < partRatios.length; i++) {
             let partType = partRatios[i];
@@ -162,16 +164,6 @@ module.exports.loop = function () {
     
     for (var name in Game.creeps) {
         let creep = Game.creeps[name];
-        let room = creep.room;
-        let sector = sectors[creep.memory.sector];
-        if (sector) {
-            continue;
-        }
-    }    
-
-    
-    for (var name in Game.creeps) {
-        let creep = Game.creeps[name];
         let sector = sectors[creep.memory.sector || 'worker'];
         if (sector) {
             sector.employ && sector.employ(creep);
@@ -192,7 +184,7 @@ module.exports.loop = function () {
         let buildSize =  Math.max(250, room.energyCapacityAvailable - 300);
         if (room.work < desiredWork) {
             if (room.energyAvailable >= buildSize || room.work == 0) {
-                let spawned = createCreep(spawn, Math.min(buildSize, room.energyAvailable), {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined})
+                let spawned = createCreep(spawn, buildSize, {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined})
                 console.log("Spawned worker", spawned);
             }
             continue;
