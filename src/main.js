@@ -197,22 +197,10 @@ module.exports.loop = function () {
     
     for (var name in Game.creeps) {
         let creep = Game.creeps[name];
-        if (creep.memory.sector) {
-            let sector = sectors[creep.memory.sector];
-            if (sector) {
-                sector.employ && sector.employ(creep);
-                continue;
-            }
-        }
-        let goal = creep.memory.goal;
-        switch (goal) {
-            case 'harvest':
-                harvestGoal.preCheck(creep);
-                break;
-        }
-        if (creep.newGoal && creep.newGoal != creep.memory.newGoal) {
-            creep.memory.goal = creep.newGoal;
-            delete creep.memory.loc;
+        let sector = sectors[creep.memory.sector || 'worker'];
+        if (sector) {
+            sector.employ && sector.employ(creep);
+            continue;
         }
     }
     
@@ -269,33 +257,6 @@ module.exports.loop = function () {
             console.log("Spawned requested", spawned);
             continue;
         }
-        
-        /*
-        if (room.memory.creepRequests && room.memory.creepRequests.length)
-        // (creep.room.work < getDesiredWorkParts(creep.room) || creep.room.creepRequests.length || creep.room.energyAvailable < 300
-        let buildSize =  Math.max(250, room.energyCapacityAvailable - 300);
-        if (!spawn.spawning && room.energyAvailable >= buildSize || room.work == 0) {
-            let create;
-            let creepRequests = room.creepRequests;
-            let desiredWork = getDesiredWorkParts(room);
-            if (desiredWork > room.work) {
-                create = (spawn) => createCreep(spawn, Math.min(buildSize, room.energyAvailable), {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined})
-            }
-            else if (room.memory.creepRequests && room.memory.creepRequests.length) {
-                let request = room.memory.creepRequests.pop();
-                create = (spawn) => createCreep(spawn, buildSize, request);
-            }
-            else if (creepRequests.length) {
-                create = (spawn) => createCreep(spawn, buildSize, creepRequests[0]);
-            }
-            else {
-                //console.log("nothing to spawn?",desiredWork,room.work);
-            }
-            let spawned = create && create(spawn);
-            if (spawned)
-                console.log("Spawned ", spawned);
-        }
-        */
     }
     
     var link = Game.getObjectById('583776f3c176db8754bf76cb');

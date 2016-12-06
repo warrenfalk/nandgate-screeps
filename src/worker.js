@@ -54,7 +54,16 @@ const WorkerSector = {
         }
 	},
 	employ: function(creep) {
-
+        let goal = creep.memory.goal;
+        switch (goal) {
+            case 'harvest':
+                harvestGoal.preCheck(creep);
+                break;
+        }
+        if (creep.newGoal && creep.newGoal != creep.memory.newGoal) {
+            creep.memory.goal = creep.newGoal;
+            delete creep.memory.loc;
+        }
 	}
 }
 
