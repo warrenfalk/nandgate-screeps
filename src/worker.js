@@ -126,7 +126,7 @@ const WorkerSector = {
 	            continue;
 	        let desiredWork = getDesiredWorkParts(room);
 	        if (room.workerStats.work < desiredWork) {
-	        	console.log(roomName, "with", (room.work+' of '+desiredWork), "work parts, requesting creep")
+	        	console.log(roomName, "with", (room.workerStats.work+' of '+desiredWork), "work parts, requesting creep")
 	            //if (room.energyAvailable >= buildSize || room.work == 0) {
 				makeRequest(roomName, {providing:'energy', creep: {parts:[WORK,CARRY,MOVE,WORK,CARRY,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE],sector:undefined}});
 	        }
