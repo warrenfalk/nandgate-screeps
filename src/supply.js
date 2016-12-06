@@ -9,13 +9,13 @@ const Supply = {
     init: function() {
 
     },
-    fun: function(room) {
+    run: function(room) {
 
     },
-    stats: function(room) {
+    stats: function(creep) {
 
     },
-    employ: function(room) {
+    employ: function(creep) {
 
     },
     request: function(makeRequest) {
