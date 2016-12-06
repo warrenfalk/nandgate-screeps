@@ -28,10 +28,10 @@ const WorkerSector = {
 	},
 	run: function(room) {
         if (room.isFriendly) {
-            console.log(room.name,"work parts have/desired",room.work+"/"+getDesiredWorkParts(room));
 	        room.workerStats = {
 	        	work: 0,
 	        }
+            console.log(room.name,"work parts have/desired",room.workerStats.work+"/"+getDesiredWorkParts(room));
         }
 	},
 	stats: function(creep) {
