@@ -16,13 +16,19 @@ function findJob(creep, room) {
     }
 }
 
+// calculate the total stored energy
+// base the number of desired work parts based on the total stored energy
+// so that with fewer workers to carry away and use energy, the storage builds up causing more workers until equilibrium is reached
+let getDesiredWorkParts = (room) => 5 + Math.ceil(room.storedEnergy * 0.002);
+
 
 const WorkerSector = {
 	init: function() {
 
 	},
 	run: function(room) {
-
+        if (room.isFriendly)
+            console.log(room.name,"work parts have/desired",room.work+"/"+getDesiredWorkParts(room));
 	},
 	stats: function(creep) {
         let room = creep.room;

@@ -159,11 +159,6 @@ module.exports.loop = function () {
     // base the number of desired work parts based on the total stored energy
     // so that with fewer workers to carry away and use energy, the storage builds up causing more workers until equilibrium is reached
     let getDesiredWorkParts = (room) => 5 + Math.ceil(room.storedEnergy * 0.002);
-    for (var name in Game.rooms) {
-        let room = Game.rooms[name];
-        if (room.isFriendly)
-            console.log(room.name,"work parts have/desired",room.work+"/"+getDesiredWorkParts(room));
-    }
     
     for (var name in Game.creeps) {
         let creep = Game.creeps[name];
