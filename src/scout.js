@@ -51,7 +51,7 @@ const ScoutSector = {
                     if (!closest || closest.distance > route.length)
                         closest = {distance: route.length, spawn: spawn};
                 }
-                console.log("scout", name, "requesting creep from", closest.spawn);
+                console.log("scout", name, "requesting creep from spawn", closest.spawn.name);
             }
         }
     },
