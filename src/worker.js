@@ -38,7 +38,6 @@ const WorkerSector = {
         let room = creep.room;
         if (room.isFriendly) {
         	room.workerStats.work += (creep.spawning || creep.ticksToLive > 30) && creep.getActiveBodyparts(WORK);
-        	console.log("stats", JSON.stringify(room.workerStats))
         }
         let goal = creep.memory.goal;
         let complete = !goal;
