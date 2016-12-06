@@ -7,10 +7,7 @@ const WorkerSector = {
 	run: function(room) {
 
 	},
-	stats: function(room) {
-
-	},
-	employ: function(creep) {
+	stats: function(creep) {
         let room = creep.room;
         let goal = creep.memory.goal;
         let complete = !goal;
@@ -38,6 +35,9 @@ const WorkerSector = {
             goal = findJob(creep, room);
             creep.newGoal = goal;
         }
+	},
+	employ: function(creep) {
+
 	}
 }
 
