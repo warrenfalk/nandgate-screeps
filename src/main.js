@@ -179,30 +179,6 @@ module.exports.loop = function () {
         }
     }
     
-    for (var name in Game.creeps) {
-        let creep = Game.creeps[name];
-        if (creep.memory.sector)
-            continue;
-        let goal = creep.memory.goal;
-        switch (creep.memory.goal) {
-            case 'harvest':
-                harvestGoal.work(creep);
-                break;
-            case 'supply':
-                supplyGoal.work(creep);
-                break;
-            case 'build':
-                buildGoal.work(creep);
-                break;
-            case 'upgrade':
-                upgradeGoal.work(creep);
-                break;
-            case 'tower':
-                towerGoal.work(creep);
-                break;
-        }
-    }
-
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
         let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})[0];

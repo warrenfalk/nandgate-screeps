@@ -91,6 +91,24 @@ const WorkerSector = {
             creep.memory.goal = creep.newGoal;
             delete creep.memory.loc;
         }
+        goal = creep.memory.goal;
+        switch (creep.memory.goal) {
+            case 'harvest':
+                harvestGoal.work(creep);
+                break;
+            case 'supply':
+                supplyGoal.work(creep);
+                break;
+            case 'build':
+                buildGoal.work(creep);
+                break;
+            case 'upgrade':
+                upgradeGoal.work(creep);
+                break;
+            case 'tower':
+                towerGoal.work(creep);
+                break;
+        }        
 	}
 }
 
