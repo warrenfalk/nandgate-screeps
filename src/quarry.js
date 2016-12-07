@@ -138,7 +138,7 @@ Quarry.prototype.employConstructor = function(creep) {
         else if (road.type === "constructionSite") {
             console.log("under construction");
             // if it is still a construciton site, start building it
-            creep.build(road);
+            creep.build(road.constructionSite);
         }
         else {
             console.log("ROAD", road.id);
