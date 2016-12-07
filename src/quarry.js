@@ -355,7 +355,7 @@ const QuarrySector = {
                 if (quarry.memory.complete)
                     recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
                 else
-                    recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK], max: 950})
+                    recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE], max: 1000})
             }
             console.log("desired quarry CARRY parts", quarry.calcDesiredCarryParts());
             /*
