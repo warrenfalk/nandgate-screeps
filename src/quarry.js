@@ -91,8 +91,9 @@ Quarry.prototype.employConstructor = function(creep) {
 Quarry.prototype.findDrop = function() {
     let origin = this.findOrigin();
     let room = Game.rooms[origin];
-    let drops = room.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_LINK || s.structureType === STRUCTURE_STORAGE})
-    let path = PathFinder.search(this.flag.pos, drops, {
+    let candidates = room.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_LINK || s.structureType === STRUCTURE_STORAGE})
+    candidates = candidates.map(o => {pos: o.pos, range: 1});
+    let pathData = PathFinder.search(this.flag.pos, candidates, {
         plainCost: 2,
         swampCost: 2, // we're going to build road over this eventually, so just go shortest path
         roomCallback: function(roomName) {
@@ -109,7 +110,9 @@ Quarry.prototype.findDrop = function() {
             return costs;
         }
     })
-    console.log("PATH", Room.serializePath(path.path));
+    let path = pathData.path;
+    let drop = path[path.length - 1];
+    console.log("PATH", JSON.serialize(path));
     return origin;
 }
 Quarry.prototype.findOrigin = function() {
