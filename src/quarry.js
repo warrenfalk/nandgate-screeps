@@ -191,7 +191,10 @@ Quarry.prototype.employConstructor = function(creep) {
         let m = creep.memory.quarry;
         if (!m.index)
             m.index = 0;
-        let spot = path[sawtooth(m.index, path.length)];
+        let pathIndex = sawtooth(m.index, path.length);
+        let spot = path[pathIndex];
+        if (pathIndex >= (path.length - 1))
+            m.complete = true;
         let loc = new RoomPosition(spot.x, spot.y, spot.roomName);
         console.log('loc', JSON.stringify(loc));
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
@@ -250,7 +253,7 @@ Quarry.prototype.findPath = function() {
     // find path to closest
     let pathData = PathFinder.search(this.flag.pos, candidates, {
         plainCost: 2,
-        swampCost: 2, // we're going to build road over this eventually, so just go shortest path
+        swampCost: 3, // we're going to build road over this eventually, so mostly just go shortest path, but roads over swamps cost more
         roomCallback: function(roomName) {
             let room = Game.rooms[roomName];
             if (!room)
@@ -349,7 +352,10 @@ const QuarrySector = {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct) {
-                recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
+                if (quarry.memory.complete)
+                    recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
+                else
+                    recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK], max: 950})
             }
             console.log("desired quarry CARRY parts", quarry.calcDesiredCarryParts());
             /*
