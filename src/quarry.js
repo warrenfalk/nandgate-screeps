@@ -90,6 +90,26 @@ Quarry.prototype.employConstructor = function(creep) {
 }
 Quarry.prototype.findDrop = function() {
     let origin = this.findOrigin();
+    let room = Game.rooms[origin];
+    let drops = room.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_LINK || s.structureType === STRUCTURE_STORAGE})
+    let path = PathFinder.search(this.flag, drops, {
+        plainCost: 2,
+        swampCost: 2, // we're going to build road over this eventually, so just go shortest path
+        roomCallback: function(roomName) {
+            let room = Game.rooms[roomName];
+            if (!room)
+                return false;
+            let costs = new PathFinder.CostMatrix;
+            room.find(FIND_STRUCTURES).forEach(s => {
+                if (s.structureType === STRUCTURE_ROAD)
+                    costs.set(s.pos.x, s.pos.y, 1);
+                else if (!(s.structureType === STRUCTURE_CONTAINER || (s.structureType === STRUCTURE_RAMPART && s.my)))
+                    costs.set(s.pos.x, s.pos.y, 0xff);
+            })
+            return costs;
+        }
+    })
+    console.log("PATH", JSON.stringify(path));
     return origin;
 }
 Quarry.prototype.findOrigin = function() {
