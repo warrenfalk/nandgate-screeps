@@ -60,8 +60,8 @@ Quarry.prototype.employ = function(creep) {
     }
 }
 Quarry.prototype.employMiner = function(creep) {
-    if (creep.pos.getRangeTo(quarry.flag) != 0) {
-        creep.moveTo(quarry.flag);
+    if (creep.pos.getRangeTo(this.flag) != 0) {
+        creep.moveTo(this.flag);
         return;
     }
     let sources = creep.pos.findInRange(FIND_SOURCES, 1, {filter: s => s.energy > 0});
@@ -138,6 +138,11 @@ const QuarrySector = {
             unemployed[q.role].push(creep);
             return;
         }
+        let quarry = quarryTeams[q.name];
+        if (!quarry) {
+            delete creep.memory.quarry.name;
+            return;
+        }
         quarry.stats(creep);
     },
     employ: function(creep) {
@@ -176,7 +181,7 @@ function recruit(quarry, makeRequest, role, specs) {
     /*
     makeRequest(room, {
         providing:'energy',
-        creep: Object.assign({}, specs, {sector: 'quary', memory: {quarry: {name: quarry.flag.name, role: role}}}),
+        creep: Object.assign({}, specs, {sector: 'quarry', memory: {quarry: {name: quarry.flag.name, role: role}}}),
     });
     */
 }
