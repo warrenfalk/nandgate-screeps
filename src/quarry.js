@@ -70,10 +70,10 @@ function Quarry(flag) {
     let memory = Memory.quarry[flag.name];
 
     let path = memory.path;
-    if ((Game.time - memory.path.time) < 1000) {
+    if (!path || !path.time || (Game.time - path.time) < 1000) {
         let newPath = this.findPath();
         if (newPath && newPath.path && newPath.path.length) {
-            console.log("Refreshing path for",this.flag.name);
+            console.log("Refreshed path for",this.flag.name);
             memory.path = newPath
         }
     }
