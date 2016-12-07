@@ -163,6 +163,15 @@ Quarry.prototype.load = function(creep) {
             this.miner.transfer(creep, RESOURCE_ENERGY);
     }
 }
+Quarry.prototype.advanceConstructor = function(creep) {
+    let m = creep.memory.quarry;
+    let path = this.path.path;
+    m.index = (m.index|0) + 1;
+    m.tries = 0;
+    let newSpot = path[sawtooth(m.index, path.length)];
+    let newLoc = new RoomPosition(newSpot.x, newSpot.y, newSpot.roomName);
+    creep.moveTo(newLoc);
+}
 Quarry.prototype.employConstructor = function(creep) {
     let carry = creep.carry.energy;
     let loadDistance = creep.pos.getRangeTo(this.flag.pos);
@@ -188,14 +197,12 @@ Quarry.prototype.employConstructor = function(creep) {
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
         let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
-            console.log("ROAD: no road");
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
             if (result === ERR_INVALID_TARGET)
-                m.index++
+                this.advanceConstructor(creep);
         }
         else if (road.type === "constructionSite") {
-            console.log("ROAD: constr site");
             // if it is still a construction site, start building it
             if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
                 creep.moveTo(road.constructionSite);
@@ -203,15 +210,12 @@ Quarry.prototype.employConstructor = function(creep) {
         }
         else {
             // there is a road at the current loction
-            if ((road.structure.hitsMax - road.structure.hits) >= 100) {
-                console.log("ROAD: repair");
+            if ((road.structure.hitsMax - road.structure.hits) >= 500) {
                 // but the road needs repair
                 // find a place on the map nearby but not on the road
                 // (make sure it is in the same room)
                 // because we might be a while
                 let position = findBuildPositionFor(road.structure.pos, path) || road.structure.pos;
-                console.log("Road avoid",JSON.stringify(path));
-                console.log("Road Build Position",JSON.stringify(position));
                 if (creep.pos.getRangeTo(position) > 0)
                     creep.moveTo(position);
                 creep.repair(road.structure);
@@ -221,18 +225,12 @@ Quarry.prototype.employConstructor = function(creep) {
                 let distance = creep.pos.getRangeTo(loc);
                 if (distance > 0 && m.tries < 3) {
                     m.tries = (m.tries||0) + 1;
-                    console.log("ROAD: not in place");
                     // we should be on that square
                     creep.moveTo(loc);
                 }
                 else {
-                    m.tries = 0;
-                    console.log("ROAD: in place");
                     // we're on that square, so now advance and go ahead and move to the new square
-                    m.index++;
-                    let newSpot = path[sawtooth(m.index, path.length)];
-                    let newLoc = new RoomPosition(newSpot.x, newSpot.y, newSpot.roomName);
-                    creep.moveTo(newLoc);
+                    this.advanceConstructor(creep);
                 }
             }
         }
