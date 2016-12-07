@@ -212,7 +212,7 @@ Quarry.prototype.employConstructor = function(creep) {
                 let position = findBuildPositionFor(road.structure.pos, path) || road.structure.pos;
                 console.log("Road avoid",JSON.stringify(path));
                 console.log("Road Build Position",JSON.stringify(position));
-                if (creep.pos.getRangeTo(new RoomPosition(position.x, position.y, position.roomName)) > 0)
+                if (creep.pos.getRangeTo(new RoomPosition(position.x, position.y, road.structure.pos.roomName)) > 0)
                     creep.moveTo(position);
                 creep.repair(road.structure);
             }
