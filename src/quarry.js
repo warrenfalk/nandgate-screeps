@@ -19,7 +19,7 @@ function findBuildPositionFor(targetPosition, avoid) {
     avoid.forEach(pos => {
         if (pos.roomName && pos.roomName !== room.name)
             return;
-        let avoidKey = (pos.y|0)+((pos.x|0)*64);
+        let avoidKey = pos.y+","+pos.x;
         console.log("avoidKey", avoidKey);
         avoidSet[avoidKey] = true;
     })
@@ -34,7 +34,7 @@ function findBuildPositionFor(targetPosition, avoid) {
         for (let y in area) {
             let row = area[y];
             for (let x in row) {
-                let avoidKey = y+(x*64);
+                let avoidKey = y+","+x;
                 console.log("avoidKey", avoidKey);
                 if (avoidSet[avoidKey])
                     continue;
