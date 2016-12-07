@@ -44,7 +44,7 @@ Quarry.prototype.calcDesiredCarryParts = function() {
     let distance = this.path.length;
     let energyPerCarry = carryRate / distance; // how many energy a CARRY part can carry on this path
     let neededCarryParts = energyRate / energyPerCarry
-    return neededCarryParts;
+    return Math.ceil(neededCarryParts);
 }
 Quarry.prototype.stats = function(creep) {
     const q = creep.memory.quarry;
