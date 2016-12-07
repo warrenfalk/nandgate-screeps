@@ -125,11 +125,22 @@ Quarry.prototype.employConstructor = function(creep) {
     else {
         // I have energy, so I should be crawling the path
         let m = creep.memory.quarry;
-        let index = m.index || -1;
-        let direction = m.dir || 1;
-        index += direction;
+        let index = m.index || 0;
         let loc = this.path.path[index];
         console.log('loc', JSON.stringify(loc));
+        let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
+        let road = contents.find(s => s.structureType === STRUCTURE_ROAD || (s.type === "constructionSite") && s.constructionSite.structureType === STRUCTURE_ROAD))
+        if (!road) {
+            // if there is no road, there, start the road
+            Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
+        }
+        else if (road.type === "constructionSite") {
+            // if it is still a construciton site, start building it
+            creep.build(road);
+        }
+        else {
+            console.log("ROAD", road.id);
+        }
     }
 }
 Quarry.prototype.findPath = function() {
