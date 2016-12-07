@@ -218,7 +218,6 @@ Quarry.prototype.employConstructor = function(creep) {
         if (pathIndex >= (path.length - 1))
             m.complete = true;
         let loc = new RoomPosition(spot.x, spot.y, spot.roomName);
-        console.log('loc', JSON.stringify(loc));
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
         let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
