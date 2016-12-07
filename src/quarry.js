@@ -132,6 +132,7 @@ Quarry.prototype.employConstructor = function(creep) {
         // I have energy, so I should be crawling the path
         let m = creep.memory.quarry;
         let index = m.index || 0;
+        let direction = m.direction || 1;
         let loc = this.path.path[index];
         console.log('loc', JSON.stringify(loc));
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
@@ -149,6 +150,11 @@ Quarry.prototype.employConstructor = function(creep) {
             }
         }
         else {
+            index += direction;
+            if (index >= this.path.path.length) {
+                console.log("reached end, turning around");
+                direction = m.direction = -direction;
+            }
             console.log("ROAD", road.id);
         }
     }
