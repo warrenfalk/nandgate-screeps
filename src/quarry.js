@@ -105,7 +105,11 @@ Quarry.prototype.employCarrier = function(creep) {
 
 }
 Quarry.prototype.employConstructor = function(creep) {
-
+    let carry = creep.carry.energy;
+    if (carry == 0) {
+        if (creep.pos.getRangeTo(this.flag.pos) > 1)
+            creep.moveTo(this.flag.pos, {range: 1})
+    }
 }
 Quarry.prototype.findPath = function() {
     let origin = this.findOrigin();
