@@ -19,7 +19,9 @@ function findBuildPositionFor(targetPosition, avoid) {
     avoid.forEach(pos => {
         if (pos.roomName && pos.roomName !== room.name)
             return;
-        avoidSet[(pos.y|0)+((pos.x|0)*64)] = true;
+        let avoidKey = (pos.y|0)+((pos.x|0)*64);
+        console.log("avoidKey", avoidKey);
+        avoidSet[avoidKey] = true;
     })
     console.log("avoid", JSON.stringify(avoidSet));
     let spots = [];
@@ -32,7 +34,9 @@ function findBuildPositionFor(targetPosition, avoid) {
         for (let y in area) {
             let row = area[y];
             for (let x in row) {
-                if (avoidSet[y+(x*64)])
+                let avoidKey = y+(x*64);
+                console.log("avoidKey", avoidKey);
+                if (avoidSet[avoidKey])
                     continue;
                 if (row[x].some(f => f.terrain === 'wall' || f.type === 'structure' || f.type === 'creep'))
                     continue;
