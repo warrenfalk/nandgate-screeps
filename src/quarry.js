@@ -92,7 +92,7 @@ Quarry.prototype.findDrop = function() {
     let origin = this.findOrigin();
     let room = Game.rooms[origin];
     let drops = room.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_LINK || s.structureType === STRUCTURE_STORAGE})
-    let path = PathFinder.search(this.flag, drops, {
+    let path = PathFinder.search(this.flag.pos, drops, {
         plainCost: 2,
         swampCost: 2, // we're going to build road over this eventually, so just go shortest path
         roomCallback: function(roomName) {
