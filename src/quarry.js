@@ -104,7 +104,7 @@ Quarry.prototype.employMiner = function(creep) {
 Quarry.prototype.employCarrier = function(creep) {
 
 }
-Quarry.prototype.load = function() {
+Quarry.prototype.load = function(creep) {
     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
     let resource = resources && resources[0];
     if (resource) {
@@ -123,12 +123,12 @@ Quarry.prototype.employConstructor = function(creep) {
             creep.moveTo(this.flag.pos, {range: 1})
         }
         else {
-            this.load();
+            this.load(creep);
         }
     }
     else {
         if (loadDistance <= 1 && carry < creep.carryCapacity)
-            this.load();
+            this.load(creep);
         // I have energy, so I should be crawling the path
         let m = creep.memory.quarry;
         let index = m.index || 0;
