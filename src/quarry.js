@@ -184,6 +184,10 @@ const QuarrySector = {
     },
     stats: function(creep) {
         const q = creep.memory.quarry;
+        if (!q) {
+            console.log("What to do about quarry sector with no quarry data?");
+            return;
+        }
         let name = q.name;        
         if (!name) {
             unemployed[q.role].push(creep);
