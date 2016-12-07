@@ -118,7 +118,7 @@ Quarry.prototype.employConstructor = function(creep) {
                 let result = creep.pickup(resource);
             }
             else {
-                miner.transfer(creep, RESOURCE_ENERGY);
+                this.miner.transfer(creep, RESOURCE_ENERGY);
             }
         }
     }
@@ -138,7 +138,9 @@ Quarry.prototype.employConstructor = function(creep) {
         else if (road.type === "constructionSite") {
             console.log("under construction");
             // if it is still a construciton site, start building it
-            creep.build(road.constructionSite);
+            if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
+                creep.moveTo(road.constructionSite, {range: 3});
+            }
         }
         else {
             console.log("ROAD", road.id);
