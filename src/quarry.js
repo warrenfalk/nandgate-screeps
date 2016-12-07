@@ -13,6 +13,45 @@ const _ = require('lodash');
 // this function will return 0, 1, 2, 1, 0, 1, 2, 1,...
 const sawtooth = (index, length) => length - (1 + Math.abs(((index - 1) % ((length * 2) - 2)) - (length - 2)))
 
+function findBuildPositionFor(targetPosition, avoid) {
+    let room = Game.rooms[targetPosition.roomName];
+    let avoidSet = {};
+    avoid.forEach(pos => {
+        if (pos.roomName !== room.name)
+            return;
+        avoidSet[pos.y+(pos.x*64)] = true;
+    })
+    let spots = [];
+    for (let i = 1; i < 4; i++) {
+        let top = Math.max(targetPosition.y - 1, 1);
+        let bottom = Math.min(targetPosition.y + 1, 48);
+        let left = Math.max(targetPosition.x - 1, 1);
+        let right = Math.max(targetPosition.x + 1, 48);
+        let area = room.lookAtArea(top, left, bottom, right);
+        for (let y in area) {
+            let row = area[y];
+            for (let x in row) {
+                if (avoidSet[y+(x*64)])
+                    continue;
+                if (row[x].some(f => f.terrain === 'wall' || f.type === 'structure' || f.type === 'creep'))
+                    continue;
+                spots.push(row[x]);
+            }
+        }
+        let spot = spots.find(s => s.some(f => f.terrain === 'normal'));
+        if (spot)
+            return spot;
+        spot = spots[0];
+        if (spot)
+            return spot;
+    }
+}
+
+const WORK_RATE = 2;
+const CARRY_RATE = 50;
+const RNDTRIP_FACTOR = 0.5;
+const CARRY_EFFICIENCY = 0.85; // the carry efficiency we expect
+
 function Quarry(flag) {
     this.flag = flag;
     this.carriers = [];
@@ -30,10 +69,6 @@ function Quarry(flag) {
     this.path = path;
     this.drop = drop;
 }
-const WORK_RATE = 2;
-const CARRY_RATE = 50;
-const RNDTRIP_FACTOR = 0.5;
-const CARRY_EFFICIENCY = 0.85; // the carry efficiency we expect
 Quarry.prototype.calcDesiredCarryParts = function() {
     // A miner can mine 2 energy per tick per WORK part
     // A carry part can move 50 energy one square per work part
@@ -153,7 +188,7 @@ Quarry.prototype.employConstructor = function(creep) {
         else if (road.type === "constructionSite") {
             // if it is still a construciton site, start building it
             if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
-                creep.moveTo(road.constructionSite, {range: 3});
+                creep.moveTo(road.constructionSite);
             }
         }
         else {
@@ -163,11 +198,11 @@ Quarry.prototype.employConstructor = function(creep) {
                 // find a place on the map nearby but not on the road
                 // (make sure it is in the same room)
                 // because we might be a while
-                // TODO: make routine better, but for now just get in range
-                if (ERR_NOT_IN_RANGE === creep.repair(road.structure)) {
-
-                    creep.moveTo(road.structure);
-                }
+                let position = findBuildPositionFor(road.structure.pos, path);
+                if (creep.pos.getRangeTo(position) > 0)
+                    creep.moveTo(position);
+                else
+                    creep.repair(road.structure);
             }
             else {
                 // the road is there and everything is good
