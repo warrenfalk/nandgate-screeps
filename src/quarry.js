@@ -15,8 +15,12 @@ function Quarry(flag) {
         Memory.quarry = {};
     if (!Memory.quarry[flag.name])
         Memory.quarry[flag.name] = {};
-    this.memory = Memory.quarry[flag.name];
-    this.path = this.memory.path || this.findPath();
+    let memory = this.memory = Memory.quarry[flag.name];
+
+    let drop = memory.drop || this.findDrop();
+    console.log("DROP", drop);
+
+    this.path = memory.path || this.findPath();
     this.desiredCarriers = this.path.length
 }
 Quarry.prototype.findPath = function() {
@@ -82,6 +86,9 @@ Quarry.prototype.employCarrier = function(creep) {
 
 }
 Quarry.prototype.employConstructor = function(creep) {
+
+}
+Quarry.prototype.findDrop = function() {
 
 }
 Quarry.prototype.findOrigin = function() {
