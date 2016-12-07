@@ -106,9 +106,24 @@ Quarry.prototype.employCarrier = function(creep) {
 }
 Quarry.prototype.employConstructor = function(creep) {
     let carry = creep.carry.energy;
-    if (carry == 0) {
-        if (creep.pos.getRangeTo(this.flag.pos) > 1)
+    let loadDistance = creep.pos.getRangeTo(this.flag.pos);
+    if (carry === 0 || (loadDistance <= 1 && carry < creep.carryCapacity)) {
+        if (loadDistance > 1) {
             creep.moveTo(this.flag.pos, {range: 1})
+        }
+        else {
+            let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+            let resource = resources && resources[0];
+            if (resource) {
+                let result = creep.pickup(resource);
+            }
+            else {
+                miner.transfer(creep, RESOURCE_ENERGY);
+            }
+        }
+    }
+    else {
+        console.log("what to do now?");
     }
 }
 Quarry.prototype.findPath = function() {
