@@ -18,7 +18,7 @@ function Quarry(flag) {
     let memory = this.memory = Memory.quarry[flag.name];
 
     let drop = memory.drop || this.findDrop();
-    console.log("DROP", drop);
+    console.log("DROP", JSON.stringify(drop));
 
     this.path = memory.path || this.findPath();
     this.desiredCarriers = this.path.length
