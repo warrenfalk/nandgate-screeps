@@ -115,7 +115,7 @@ Quarry.prototype.findDrop = function() {
     })
     let path = pathData.path;
     let drop = path[path.length - 1];
-    return {pos: drop, time: Game.ticks}
+    return {pos: drop, time: Game.time}
 }
 Quarry.prototype.findOrigin = function() {
     let closest;
