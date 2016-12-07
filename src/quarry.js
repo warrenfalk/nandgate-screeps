@@ -188,13 +188,15 @@ Quarry.prototype.employConstructor = function(creep) {
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
         let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
+            console.log("ROAD: no road");
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
             if (result === ERR_INVALID_TARGET)
                 m.index++
         }
         else if (road.type === "constructionSite") {
-            // if it is still a construciton site, start building it
+            console.log("ROAD: constr site");
+            // if it is still a construction site, start building it
             if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
                 creep.moveTo(road.constructionSite);
             }
@@ -202,6 +204,7 @@ Quarry.prototype.employConstructor = function(creep) {
         else {
             // there is a road at the current loction
             if ((road.structure.hitsMax - road.structure.hits) >= 100) {
+                console.log("ROAD: repair");
                 // but the road needs repair
                 // find a place on the map nearby but not on the road
                 // (make sure it is in the same room)
@@ -216,10 +219,12 @@ Quarry.prototype.employConstructor = function(creep) {
             else {
                 // the road is there and everything is good
                 if (creep.pos.getRangeTo(loc) > 0) {
+                    console.log("ROAD: not in place");
                     // we should be on that square
                     creep.moveTo(loc);
                 }
                 else {
+                    console.log("ROAD: in place");
                     // we're on that square, so now advance and go ahead and move to the new square
                     m.index++;
                     let newSpot = path[sawtooth(m.index, path.length)];
