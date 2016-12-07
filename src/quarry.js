@@ -86,7 +86,6 @@ Quarry.prototype.pause = function(pauseTime) {
         this.memory.paused = true;
         delete this.memory.pauseUntil;
     }
-    this.paused = true;
 }
 Quarry.prototype.isPaused = function() {
     return this.memory.pauseUntil || this.memory.paused;
@@ -357,7 +356,7 @@ const QuarrySector = {
         if (!name)
             return;
         let quarry = quarryTeams[name];
-        if (!quarry.flag.room.isFriendly && creep.room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
+        if (quarry.flag.room && !quarry.flag.room.isFriendly && creep.room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
             let invaderTtl = creep.room.invaders.reduce((ttl,invader) => ttl += (invader.ticksToLive||0), 0) || 1501;
             if (!quarry.isPaused()) {
                 quarry.pause(invaderTtl);
