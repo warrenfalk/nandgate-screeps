@@ -38,7 +38,7 @@ function findBuildPositionFor(targetPosition, avoid) {
                 let spot = row[x];
                 spot.x = x;
                 spot.y = y;
-                spots.push(row[x]);
+                spots.push(spot);
             }
         }
         let spot = spots.find(s => s.some(f => f.terrain === 'normal'));
