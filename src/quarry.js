@@ -151,7 +151,7 @@ Quarry.prototype.employConstructor = function(creep) {
         }
         else {
             m.index = index = index + direction;
-            if (index >= this.path.path.length) {
+            if (index >= this.path.path.length || index <= 0) {
                 console.log("reached end, turning around");
                 direction = m.direction = -direction;
             }
