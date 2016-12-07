@@ -186,6 +186,7 @@ const QuarrySector = {
         const q = creep.memory.quarry;
         if (!q) {
             console.log("What to do about quarry sector with no quarry data?");
+            delete creep.memory.sector;
             return;
         }
         let name = q.name;        
