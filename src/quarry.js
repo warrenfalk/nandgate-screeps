@@ -41,7 +41,7 @@ Quarry.prototype.calcDesiredCarryParts = function() {
     let workParts = this.miner.getActiveBodyparts(WORK);
     let energyRate = workParts * WORK_RATE;
     let carryRate = CARRY_RATE * CARRY_EFFICIENCY * RNDTRIP_FACTOR; // 21.25
-    let distance = this.path.length;
+    let distance = this.path.path.length;
     let energyPerCarry = carryRate / distance; // how many energy a CARRY part can carry on this path
     let neededCarryParts = energyRate / energyPerCarry
     return Math.ceil(neededCarryParts);
