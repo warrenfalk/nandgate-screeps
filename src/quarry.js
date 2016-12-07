@@ -380,18 +380,19 @@ const QuarrySector = {
             let quarry = quarryTeams[name];
             if (quarry.isPaused()) {
                 console.log("Quarry",name,"is paused");
-                return;
+                continue;
             }
             if (!quarry.miner) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct && quarry.flag.room) {
+                // this quarry doesn't have a construct but we do have room access
                 if (quarry.memory.complete)
                     recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
                 else
                     recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE], max: 1200})
             }
-            console.log("desired quarry CARRY parts", quarry.calcDesiredCarryParts());
+            console.log(quarry.name, quarry.miner && quarry.miner.name, quarry.construct && quarry.construct.name);
             /*
             else if ((quarry.carriers.length * 2) < quarry.calcDesiredCarryParts()) {
                 recruit(quarry, makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
@@ -410,12 +411,10 @@ function recruit(quarry, makeRequest, role, specs) {
     }
     let room = quarry.findOrigin();
     console.log("quarry", quarry.flag.name, "requesting", role, "from room", room);
-    /*
     makeRequest(room, {
         providing:'energy',
         creep: Object.assign({}, specs, {sector: 'quarry', memory: {quarry: {name: quarry.flag.name, role: role}}}),
     });
-    */
 }
 
 module.exports = QuarrySector;
