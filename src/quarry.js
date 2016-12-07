@@ -161,10 +161,12 @@ Quarry.prototype.employConstructor = function(creep) {
             if ((road.structure.hitsMax - road.structure.hits) >= 100) {
                 // but the road needs repair
                 // find a place on the map nearby but not on the road
+                // (make sure it is in the same room)
                 // because we might be a while
                 // TODO: make routine better, but for now just get in range
                 if (ERR_NOT_IN_RANGE === creep.repair(road.structure)) {
-                    creep.moveTo(road.structure, {range: 3});
+
+                    creep.moveTo(road.structure);
                 }
             }
             else {
