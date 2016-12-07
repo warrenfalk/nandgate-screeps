@@ -373,8 +373,10 @@ const QuarrySector = {
     request: function(makeRequest) {
         for (let name in quarryTeams) {
             let quarry = quarryTeams[name];
-            if (quarry.isPaused())
+            if (quarry.isPaused()) {
+                console.log("Quarry",name,"is paused");
                 return;
+            }
             if (!quarry.miner) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
