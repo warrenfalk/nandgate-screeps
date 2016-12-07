@@ -109,7 +109,7 @@ Quarry.prototype.findDrop = function() {
             return costs;
         }
     })
-    console.log("PATH", Room.serializePath(path));
+    console.log("PATH", Room.serializePath(path.path));
     return origin;
 }
 Quarry.prototype.findOrigin = function() {
