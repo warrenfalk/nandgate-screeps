@@ -19,7 +19,7 @@ function findBuildPositionFor(targetPosition, avoid) {
     avoid.forEach(pos => {
         if (pos.roomName && pos.roomName !== room.name)
             return;
-        avoidSet[pos.y+(pos.x*64)] = true;
+        avoidSet[(pos.y|0)+((pos.x|0)*64)] = true;
     })
     console.log("avoid", JSON.stringify(avoidSet));
     let spots = [];
