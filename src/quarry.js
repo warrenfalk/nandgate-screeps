@@ -8,6 +8,11 @@ And a builder who builds and maintains a road
 
 const _ = require('lodash');
 
+// this returns an element of an array given an index and a length such that an ever-increasing index results in a sawtooth access pattern on the array
+// meaning that with a length of 3 and indexes of 0, 1, 2, 3, 4, 5, 6, 7,...
+// this function will return 0, 1, 2, 1, 0, 1, 2, 1,...
+const sawtooth = (index, length) => length - (1 + Math.abs(((index - 1) % ((length * 2) - 2)) - (length - 2)))
+
 function Quarry(flag) {
     this.flag = flag;
     this.carriers = [];
@@ -130,32 +135,52 @@ Quarry.prototype.employConstructor = function(creep) {
         if (loadDistance <= 1 && carry < creep.carryCapacity)
             this.load(creep);
         // I have energy, so I should be crawling the path
+        let path = this.path.path;
         let m = creep.memory.quarry;
-        let index = m.index || 0;
-        let direction = m.direction || 1;
-        let loc = this.path.path[index];
+        if (!m.index)
+            m.index = 0;
+        let spot = path[sawtooth(m.index, path.length)];
+        let loc = new RoomPosition(spot.x, spot.y, spot.roomName);
         console.log('loc', JSON.stringify(loc));
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
         let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
-            console.log("no road", result);
+            if (result === ERR_INVALID_TARGET)
+                m.index++
         }
         else if (road.type === "constructionSite") {
-            console.log("under construction");
             // if it is still a construciton site, start building it
             if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
                 creep.moveTo(road.constructionSite, {range: 3});
             }
         }
         else {
-            m.index = index = index + direction;
-            if (index >= this.path.path.length || index <= 0) {
-                console.log("reached end, turning around");
-                direction = m.direction = -direction;
+            // there is a road at the current loction
+            if ((road.structure.hitsMax - road.structure.hits) >= 100) {
+                // but the road needs repair
+                // find a place on the map nearby but not on the road
+                // because we might be a while
+                // TODO: make routine better, but for now just get in range
+                if (ERR_NOT_IN_RANGE === creep.repair(road.structure)) {
+                    creep.moveTo(road.structure, {range: 3});
+                }
             }
-            console.log("ROAD", road.structure.id);
+            else {
+                // the road is there and everything is good
+                if (creep.pos.getRangeTo(loc) > 0) {
+                    // we should be on that square
+                    creep.moveTo(loc);
+                }
+                else {
+                    // we're on that square, so now advance and go ahead and move to the new square
+                    m.index++;
+                    let newSpot = path[sawtooth(m.index, path.length)];
+                    let newLoc = new RoomPosition(newSpot.x, newSpot.y, newSpot.roomName);
+                    creep.moveTo(newLoc);
+                }
+            }
         }
     }
 }
