@@ -152,19 +152,19 @@ const QuarrySector = {
         for (let name in quarryTeams) {
             let quarry = quarryTeams[name];
             if (!quarry.miner) {
-                recruit(makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
+                recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct) {
-                recruit(makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
+                recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
             }
             else if (quarry.carriers.length < quarry.desiredCarriers) {
-                recruit(makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
+                recruit(quarry, makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
             }
         }
     },
 }
 
-function recruit(makeRequest, role, specs) {
+function recruit(quarry, makeRequest, role, specs) {
     if (unemployed[role].length) {
         let creep = unemployed[role].pop();
         creep.memory.quarry.name = name;
