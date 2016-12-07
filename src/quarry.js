@@ -172,7 +172,7 @@ function recruit(quarry, makeRequest, role, specs) {
         return;
     }
     let room = quarry.findOrigin();
-    console.log("quarry", name, "requesting", role, "from room", room);
+    console.log("quarry", quarry.flag.name, "requesting", role, "from room", room);
     /*
     makeRequest(room, {
         providing:'energy',
