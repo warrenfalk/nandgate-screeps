@@ -92,7 +92,7 @@ Quarry.prototype.findOrigin = function() {
         if (!closest || closest.distance > route.length)
             closest = {distance: route.length, room: spawn.room};
     }
-    return spawn.room.name;
+    return closest.room.name;
 }
 Quarry.prototype.balance = function() {
     // if the constructor has no carry, then swap them
