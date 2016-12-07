@@ -17,10 +17,11 @@ function findBuildPositionFor(targetPosition, avoid) {
     let room = Game.rooms[targetPosition.roomName];
     let avoidSet = {};
     avoid.forEach(pos => {
-        if (pos.roomName !== room.name)
+        if (pos.roomName && pos.roomName !== room.name)
             return;
         avoidSet[pos.y+(pos.x*64)] = true;
     })
+    console.log("avoid", JSON.stringify(avoidSet));
     let spots = [];
     for (let i = 1; i < 4; i++) {
         let top = Math.max(targetPosition.y - 1, 1);
