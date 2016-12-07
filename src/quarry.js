@@ -112,7 +112,7 @@ Quarry.prototype.findDrop = function() {
     })
     let path = pathData.path;
     let drop = path[path.length - 1];
-    console.log("PATH", JSON.serialize(path));
+    console.log("PATH", JSON.stringfy(path));
     return origin;
 }
 Quarry.prototype.findOrigin = function() {
