@@ -218,12 +218,15 @@ Quarry.prototype.employConstructor = function(creep) {
             }
             else {
                 // the road is there and everything is good
-                if (creep.pos.getRangeTo(loc) > 0) {
+                let distance = creep.pos.getRangeTo(loc);
+                if (distance > 0 && m.tries < 3) {
+                    m.tries = (m.tries||0) + 1;
                     console.log("ROAD: not in place");
                     // we should be on that square
                     creep.moveTo(loc);
                 }
                 else {
+                    m.tries = 0;
                     console.log("ROAD: in place");
                     // we're on that square, so now advance and go ahead and move to the new square
                     m.index++;
