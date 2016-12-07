@@ -71,7 +71,7 @@ function Quarry(flag) {
 
     let path = memory.path;
     console.log(this.flag.name, path && path.time);
-    if (!path || !path.time || (Game.time - path.time) < 1000) {
+    if (!path || !path.time || (Game.time - path.time) > 1000) {
         let newPath = this.findPath();
         if (newPath && newPath.path && newPath.path.length) {
             console.log("Refreshed path for",this.flag.name);
