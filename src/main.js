@@ -70,7 +70,7 @@ function createCreep(spawn, energy, specs) {
         assembly = parts[TOUGH].concat(parts[CLAIM], parts[HEAL], parts[ATTACK], parts[RANGED_ATTACK], parts[ATTACK], parts[WORK], parts[CARRY], parts[MOVE])
     }
     console.log(JSON.stringify(assembly));
-    let mem = {};
+    let mem = specs.memory || {};
     if (specs.sector)
         mem.sector = specs.sector;
     return spawn.createCreep(assembly, mem);
