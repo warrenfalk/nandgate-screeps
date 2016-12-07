@@ -136,7 +136,7 @@ Quarry.prototype.employConstructor = function(creep) {
         let loc = this.path.path[index];
         console.log('loc', JSON.stringify(loc));
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
-        let road = contents.find(s => s.structureType === STRUCTURE_ROAD || (s.type === "constructionSite") && s.constructionSite.structureType === STRUCTURE_ROAD)
+        let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
