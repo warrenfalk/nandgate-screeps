@@ -17,7 +17,7 @@ function Quarry(flag) {
         Memory.quarry[flag.name] = {};
     let memory = this.memory = Memory.quarry[flag.name];
 
-    let drop = (memory.drop && ((Game.time - memory.drop.ticks) < 3000) && memory.drop) || this.findDrop();
+    let drop = (memory.drop && ((Game.time - memory.drop.time) < 3000) && memory.drop) || this.findDrop();
     memory.drop = drop;
 
     console.log("MEMORY", JSON.stringify(Memory.quarry));
