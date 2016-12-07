@@ -210,20 +210,19 @@ Quarry.prototype.employConstructor = function(creep) {
         }
         else {
             // there is a road at the current loction
-            // go ahead and try to repair it on the spot
-            if (road.structure.hitsMax - road.structure.hits && creep.carry.energy) {
+            if ((road.structure.hitsMax - road.structure.hits) > 0 && (road.structure.hitsMax - road.structure.hits) <= 100) {
+                // the road needs trivial repair
                 creep.repair(road.structure);
             }
-            // if it is in greater damage than we probably could repair on the spot
-            // also move to a better location
-            if ((road.structure.hitsMax - road.structure.hits) > 100) {
-                // but the road needs repair
+            else if ((road.structure.hitsMax - road.structure.hits) > 100) {
+                // the road needs prolonged repair
                 // find a place on the map nearby but not on the road
                 // (make sure it is in the same room)
                 // because we might be a while
                 let position = findBuildPositionFor(road.structure.pos, path) || road.structure.pos;
                 if (creep.pos.getRangeTo(position) > 0)
                     creep.moveTo(position);
+                creep.repair(road.structure);
             }
             else {
                 // the road is there and everything is good
