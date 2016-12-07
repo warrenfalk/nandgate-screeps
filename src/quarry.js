@@ -370,8 +370,8 @@ const QuarrySector = {
 function recruit(quarry, makeRequest, role, specs) {
     if (unemployed[role].length) {
         let creep = unemployed[role].pop();
-        creep.memory.quarry.name = name;
-        console.log(creep.name, "=> quarry", name);
+        creep.memory.quarry.name = quarry.flag.name;
+        console.log(creep.name, "=> quarry", quarry.flag.name);
         return;
     }
     let room = quarry.findOrigin();
