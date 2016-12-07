@@ -204,7 +204,10 @@ Quarry.prototype.employConstructor = function(creep) {
         // I have energy, so I should be crawling the path
         let path = this.path.path;
         if (path.length == 0) {
-            console.log("Quarry constructor can't determine path", JSON.stringify(this.path));
+            console.log("Quarry constructor can't determine path for", this.flag.name);
+            // this must mean we don't currently have access to this room, so we shouldn't have a constructor
+            // let another quarry take this constructor
+            delete creep.memory.quarry.name;
             return;
         }
         let m = creep.memory.quarry;
@@ -382,7 +385,7 @@ const QuarrySector = {
             if (!quarry.miner) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
-            else if (!quarry.construct) {
+            else if (!quarry.construct && quarry.flag.room) {
                 if (quarry.memory.complete)
                     recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
                 else
