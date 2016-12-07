@@ -154,14 +154,12 @@ const QuarrySector = {
             if (!quarry.miner) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
-            /*
             else if (!quarry.construct) {
                 recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
             }
             else if (quarry.carriers.length < quarry.desiredCarriers) {
                 recruit(quarry, makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
             }
-            */
         }
     },
 }
@@ -175,10 +173,12 @@ function recruit(quarry, makeRequest, role, specs) {
     }
     let room = quarry.findOrigin();
     console.log("quarry", quarry.flag.name, "requesting", role, "from room", room);
+    /*
     makeRequest(room, {
         providing:'energy',
         creep: Object.assign({}, specs, {sector: 'quary', memory: {quarry: {name: quarry.flag.name, role: role}}}),
     });
+    */
 }
 
 module.exports = QuarrySector;
