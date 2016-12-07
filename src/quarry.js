@@ -177,7 +177,7 @@ function recruit(quarry, makeRequest, role, specs) {
     console.log("quarry", quarry.flag.name, "requesting", role, "from room", room);
     makeRequest(room, {
         providing:'energy',
-        creep: Object.assign({}, specs, {sector: 'quary', memory: {name: quarry.flag.name, role: role}}),
+        creep: Object.assign({}, specs, {sector: 'quary', memory: {quarry: {name: quarry.flag.name, role: role}}}),
     });
 }
 
