@@ -10,6 +10,7 @@ var bootstrap = require('bootstrap');
 var reserve = require('reserve');
 var worker = require('worker');
 var scout = require('scout');
+var quarry = require('quarry');
 var RoomStats = require('room-stats');
 var Tower = require('tower');
 var Trap = require('trap');
@@ -24,6 +25,7 @@ const sectors = {
     bootstrap: bootstrap,
     reserve: reserve,
     scout: scout,
+    quarry: quarry,
 }
 
 let partCost = {
