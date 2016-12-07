@@ -118,7 +118,8 @@ Quarry.prototype.employConstructor = function(creep) {
                 let result = creep.pickup(resource);
             }
             else {
-                this.miner.transfer(creep, RESOURCE_ENERGY);
+                if (this.miner && creep.pos.getDistanceTo(this.miner))
+                    this.miner.transfer(creep, RESOURCE_ENERGY);
             }
         }
     }
