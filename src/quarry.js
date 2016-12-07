@@ -69,8 +69,10 @@ function Quarry(flag) {
         Memory.quarry[flag.name] = {};
     let memory = Memory.quarry[flag.name];
 
-    let path = (memory.drop && ((Game.time - memory.drop.time) < 3000) && memory.drop) || this.findPath();
-    memory.path = path;
+    let path = (memory.path && ((Game.time - memory.path.time) < 3000) && memory.path) || this.findPath();
+    if (path && path.path && path.path.length) {
+        memory.path = path;
+    }
     let drop = path[path.length - 1];
 
     this.memory = memory;
@@ -201,15 +203,15 @@ Quarry.prototype.employConstructor = function(creep) {
             this.load(creep);
         // I have energy, so I should be crawling the path
         let path = this.path.path;
+        if (path.length == 0) {
+            console.log("Quarry constructor can't determine path", JSON.stringify(this.path));
+            return;
+        }
         let m = creep.memory.quarry;
         if (!m.index)
             m.index = 0;
         let pathIndex = sawtooth(m.index, path.length);
         let spot = path[pathIndex];
-        if (!spot) {
-            console.log("Quarry constructor can't determine path");
-            return;
-        }
         if (pathIndex >= (path.length - 1))
             m.complete = true;
         let loc = new RoomPosition(spot.x, spot.y, spot.roomName);
