@@ -88,7 +88,7 @@ Quarry.prototype.pause = function(pauseTime) {
     }
 }
 Quarry.prototype.isPaused = function() {
-    return this.memory.pauseUntil || this.memory.paused;
+    return this.memory.paused || (this.memory.pauseUntil && (this.memory.pauseUntil > Game.time))
 }
 Quarry.prototype.calcDesiredCarryParts = function() {
     // A miner can mine 2 energy per tick per WORK part
@@ -206,6 +206,10 @@ Quarry.prototype.employConstructor = function(creep) {
             m.index = 0;
         let pathIndex = sawtooth(m.index, path.length);
         let spot = path[pathIndex];
+        if (!spot) {
+            console.log("Quarry constructor can't determine path");
+            return;
+        }
         if (pathIndex >= (path.length - 1))
             m.complete = true;
         let loc = new RoomPosition(spot.x, spot.y, spot.roomName);
