@@ -214,8 +214,7 @@ Quarry.prototype.employConstructor = function(creep) {
                 console.log("Road Build Position",JSON.stringify(position));
                 if (creep.pos.getRangeTo(new RoomPosition(position.x, position.y, position.roomName)) > 0)
                     creep.moveTo(position);
-                else
-                    creep.repair(road.structure);
+                creep.repair(road.structure);
             }
             else {
                 // the road is there and everything is good
