@@ -127,7 +127,8 @@ const Miners = {
                 let mineral = minerals && minerals[0];
                 if (mineral) {
                     let result = creep.harvest(mineral);
-                    console.log("harvest mineral",result);
+                    if (result !== OK && result !== ERR_TIRED)
+                        console.log("harvest mineral",result);
                 }
             }
         }
