@@ -88,7 +88,7 @@ Quarry.prototype.findOrigin = function() {
     let closest;
     for (var spawnName in Game.spawns) {
         let spawn = Game.spawns[spawnName];
-        let route = Game.map.findRoute(spawn.room, quarry.flag.pos.roomName);
+        let route = Game.map.findRoute(spawn.room, this.flag.pos.roomName);
         if (!closest || closest.distance > route.length)
             closest = {distance: route.length, room: spawn.room};
     }
