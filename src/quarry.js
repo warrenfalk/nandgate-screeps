@@ -15,19 +15,36 @@ function Quarry(flag) {
         Memory.quarry = {};
     if (!Memory.quarry[flag.name])
         Memory.quarry[flag.name] = {};
-    let memory = this.memory = Memory.quarry[flag.name];
+    let memory = Memory.quarry[flag.name];
 
-    let drop = (memory.drop && ((Game.time - memory.drop.time) < 3000) && memory.drop) || this.findDrop();
-    memory.drop = drop;
+    let path = (memory.drop && ((Game.time - memory.drop.time) < 3000) && memory.drop) || this.findPath();
+    memory.path = path;
+    let drop = path[path.length - 1];
 
-    console.log("MEMORY", JSON.stringify(Memory.quarry));
-
-    this.path = memory.path || this.findPath();
-    this.desiredCarriers = this.path.length
+    this.memory = memory;
+    this.path = path;
+    this.drop = drop;
 }
-Quarry.prototype.findPath = function() {
-    // TODO: implement
-    return [];
+const WORK_RATE = 2;
+const CARRY_RATE = 50;
+const RNDTRIP_FACTOR = 0.5;
+const CARRY_EFFICIENCY = 0.85; // the carry efficiency we expect
+Quarry.prototype.calcDesiredCarryParts = function() {
+    // A miner can mine 2 energy per tick per WORK part
+    // A carry part can move 50 energy one square per work part
+    // But it has to go back so it can effectively do only 25
+    // And we want some cushion, so we'll pretend it can do only 85% efficiency
+    // So for every work part given a distance of 10 we need one CARRY
+    // given a distance of 20, we'd need two CARRYs per work part
+    if (!this.miner)
+        return 0;
+    let workParts = this.miner.getActiveBodyparts(WORK);
+    let energyRate = workParts * WORK_RATE;
+    let carryRate = CARRY_RATE * CARRY_EFFICIENCY * RNDTRIP_FACTOR; // 21.25
+    let distance = this.path.length;
+    let energyPerCarry = carryRate / distance; // how many energy a CARRY part can carry on this path
+    let neededCarryParts = energyRate / energyPerCarry
+    return neededCarryParts;
 }
 Quarry.prototype.stats = function(creep) {
     const q = creep.memory.quarry;
@@ -90,7 +107,7 @@ Quarry.prototype.employCarrier = function(creep) {
 Quarry.prototype.employConstructor = function(creep) {
 
 }
-Quarry.prototype.findDrop = function() {
+Quarry.prototype.findPath = function() {
     let origin = this.findOrigin();
     let room = Game.rooms[origin];
     // find links and storages
@@ -115,9 +132,8 @@ Quarry.prototype.findDrop = function() {
             return costs;
         }
     })
-    let path = pathData.path;
-    let drop = path[path.length - 1];
-    return {pos: drop, time: Game.time}
+    let path = {path: pathData.path, time: Game.time};
+    return path;
 }
 Quarry.prototype.findOrigin = function() {
     let closest;
@@ -197,9 +213,12 @@ const QuarrySector = {
             else if (!quarry.construct) {
                 recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
             }
-            else if (quarry.carriers.length < quarry.desiredCarriers) {
+            console.log("desired quarry CARRY parts", quarry.calcDesiredCarryParts());
+            /*
+            else if ((quarry.carriers.length * 2) < quarry.calcDesiredCarryParts()) {
                 recruit(quarry, makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
             }
+            */
         }
     },
 }
