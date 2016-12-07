@@ -15,6 +15,8 @@ const ScoutSector = {
             let flag = Game.flags[name];
             if (flag.color !== COLOR_PURPLE)
                 continue;
+            if (!/^Scout:/.test(flag.name))
+                continue;
             scouts[name] = new Scout(flag);
         }
     },

@@ -6,14 +6,6 @@ Carriers who ferry the energy
 And a builder who builds and maintains a road
 */
 
-/*
-The purpose of a tower drain is to sit outside a defender's room with some healers
-and have a tough scout enter the room to get pummeled by towers
-when the tough scout gets damaged enough, he retreats to the other room for the healers
-to heal him and when healed enough re-enters the room
-
-once towers are depleted, attackers can enter
-*/
 const _ = require('lodash');
 
 function Quarry(flag) {
@@ -163,10 +155,10 @@ const QuarrySector = {
                 recruit(makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct) {
-                recruit(makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE]});
+                recruit(makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
             }
             else if (quarry.carriers.length < quarry.desiredCarriers) {
-                recruit(makeRequest, 'carrier', {assembly: [CARRY,CARRY,CARRY,MOVE]})
+                recruit(makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
             }
         }
     },
@@ -181,10 +173,12 @@ function recruit(makeRequest, role, specs) {
     }
     let room = quarry.findOrigin();
     console.log("quarry", name, "requesting", role, "from room", room);
+    /*
     makeRequest(room, {
         providing:'energy',
         creep: Object.assign({}, specs, {sector: 'quary', memory: {role: role}}
     });
+    */
 }
 
 module.exports = QuarrySector;
