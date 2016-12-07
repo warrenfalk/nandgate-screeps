@@ -47,10 +47,10 @@ function findBuildPositionFor(targetPosition, avoid) {
         }
         let spot = spots.find(s => s.features.some(f => f.terrain === 'normal'));
         if (spot)
-            return spot;
+            return new RoomPosition(spot.x, spot.y, room.name);
         spot = spots[0];
         if (spot)
-            return spot;
+            return new RoomPosition(spot.x, spot.y, room.name);
     }
 }
 global.findBuildPositionFor = findBuildPositionFor;
@@ -212,7 +212,7 @@ Quarry.prototype.employConstructor = function(creep) {
                 let position = findBuildPositionFor(road.structure.pos, path) || road.structure.pos;
                 console.log("Road avoid",JSON.stringify(path));
                 console.log("Road Build Position",JSON.stringify(position));
-                if (creep.pos.getRangeTo(new RoomPosition(position.x, position.y, road.structure.pos.roomName)) > 0)
+                if (creep.pos.getRangeTo(position) > 0)
                     creep.moveTo(position);
                 creep.repair(road.structure);
             }
