@@ -397,10 +397,12 @@ function recruit(quarry, makeRequest, role, specs) {
     }
     let room = quarry.findOrigin();
     console.log("quarry", quarry.flag.name, "requesting", role, "from room", room);
+    /*
     makeRequest(room, {
         providing:'energy',
         creep: Object.assign({}, specs, {sector: 'quarry', memory: {quarry: {name: quarry.flag.name, role: role}}}),
     });
+    */
 }
 
 module.exports = QuarrySector;
