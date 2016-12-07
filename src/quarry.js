@@ -35,13 +35,15 @@ function findBuildPositionFor(targetPosition, avoid) {
                     continue;
                 if (row[x].some(f => f.terrain === 'wall' || f.type === 'structure' || f.type === 'creep'))
                     continue;
-                let spot = row[x];
-                spot.x = x;
-                spot.y = y;
+                let spot = {
+                    x: x,
+                    y: y,
+                    features: row[x]
+                }
                 spots.push(spot);
             }
         }
-        let spot = spots.find(s => s.some(f => f.terrain === 'normal'));
+        let spot = spots.find(s => s.features.some(f => f.terrain === 'normal'));
         if (spot)
             return spot;
         spot = spots[0];
