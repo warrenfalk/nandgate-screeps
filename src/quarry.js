@@ -26,7 +26,7 @@ function findBuildPositionFor(targetPosition, avoid) {
         let top = Math.max(targetPosition.y - 1, 1);
         let bottom = Math.min(targetPosition.y + 1, 48);
         let left = Math.max(targetPosition.x - 1, 1);
-        let right = Math.max(targetPosition.x + 1, 48);
+        let right = Math.min(targetPosition.x + 1, 48);
         let area = room.lookAtArea(top, left, bottom, right);
         for (let y in area) {
             let row = area[y];
