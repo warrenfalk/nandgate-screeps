@@ -20,7 +20,7 @@ function Quarry(flag) {
     let drop = (memory.drop && ((Game.time - memory.drop.ticks) < 3000) && memory.drop) || this.findDrop();
     memory.drop = drop;
 
-    console.log("DROP", JSON.stringify(drop));
+    console.log("MEMORY", JSON.stringify(Memory.quarry));
 
     this.path = memory.path || this.findPath();
     this.desiredCarriers = this.path.length
