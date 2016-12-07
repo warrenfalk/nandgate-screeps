@@ -165,8 +165,8 @@ const QuarrySector = {
 }
 
 function recruit(makeRequest, role, specs) {
-    if (unemployed['role'].length) {
-        let creep = unemployed['role'].pop();
+    if (unemployed[role].length) {
+        let creep = unemployed[role].pop();
         creep.memory.quarry.name = name;
         console.log(creep.name, "=> quarry", name);
         return;
