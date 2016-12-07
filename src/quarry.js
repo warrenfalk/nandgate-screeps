@@ -123,7 +123,13 @@ Quarry.prototype.employConstructor = function(creep) {
         }
     }
     else {
-        console.log("what to do now?");
+        // I have energy, so I should be crawling the path
+        let m = creep.memory.quarry;
+        let index = m.index || -1;
+        let direction = m.dir || 1;
+        index += direction;
+        let loc = this.path.path[index];
+        console.log('loc', JSON.stringify(loc));
     }
 }
 Quarry.prototype.findPath = function() {
