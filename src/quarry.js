@@ -46,6 +46,7 @@ function findBuildPositionFor(targetPosition, avoid) {
             return spot;
     }
 }
+global.findBuildPositionFor = findBuildPositionFor;
 
 const WORK_RATE = 2;
 const CARRY_RATE = 50;
