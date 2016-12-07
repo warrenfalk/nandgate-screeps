@@ -89,7 +89,8 @@ Quarry.prototype.employConstructor = function(creep) {
 
 }
 Quarry.prototype.findDrop = function() {
-
+    let origin = this.findOrigin();
+    return origin;
 }
 Quarry.prototype.findOrigin = function() {
     let closest;
