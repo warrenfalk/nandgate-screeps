@@ -77,6 +77,17 @@ function Quarry(flag) {
     this.path = path;
     this.drop = drop;
 }
+Quarry.prototype.pause = function(pauseTime) {
+    if (pauseTime) {
+        this.memory.pauseUntil = Game.time + pauseTime;
+        delete this.memory.paused;
+    }
+    else {
+        this.memory.paused = true;
+        delete this.memory.pauseUntil;
+    }
+    this.paused = true;
+}
 Quarry.prototype.calcDesiredCarryParts = function() {
     // A miner can mine 2 energy per tick per WORK part
     // A carry part can move 50 energy one square per work part
@@ -343,11 +354,21 @@ const QuarrySector = {
         if (!name)
             return;
         let quarry = quarryTeams[name];
+        if (!quarry.flag.room.isFriendly && creep.room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
+            let invaderTtl = creep.room.invaders.reduce((ttl,invader) => ttl += (invader.ticksToLive||0), 0) || 1501;
+            if (!quarry.paused) {
+                quarry.pause(invaderTtl);
+                Game.notify("invader detected, pausing "+quarry.flag.name+" for "+invaderTtl, 0);
+            }
+        }
+
         quarry.employ(creep);
     },
     request: function(makeRequest) {
         for (let name in quarryTeams) {
             let quarry = quarryTeams[name];
+            if (quarry.paused)
+                return;
             if (!quarry.miner) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
