@@ -69,9 +69,13 @@ function Quarry(flag) {
         Memory.quarry[flag.name] = {};
     let memory = Memory.quarry[flag.name];
 
-    let path = (memory.path && ((Game.time - memory.path.time) < 3000) && memory.path) || this.findPath();
-    if (path && path.path && path.path.length) {
-        memory.path = path;
+    let path = memory.path;
+    if ((Game.time - memory.path.time) < 1000) {
+        let newPath = this.findPath();
+        if (newPath && newPath.path && newPath.path.length) {
+            console.log("Refreshing path for",this.flag.name);
+            memory.path = newPath
+        }
     }
     let drop = path[path.length - 1];
 
