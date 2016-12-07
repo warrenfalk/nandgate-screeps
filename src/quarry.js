@@ -392,7 +392,7 @@ const QuarrySector = {
                 else
                     recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE], max: 1200})
             }
-            console.log(quarry.name, quarry.miner && quarry.miner.name, quarry.construct && quarry.construct.name);
+            console.log(quarry.flag.name, quarry.miner && quarry.miner.name, quarry.construct && quarry.construct.name);
             /*
             else if ((quarry.carriers.length * 2) < quarry.calcDesiredCarryParts()) {
                 recruit(quarry, makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
