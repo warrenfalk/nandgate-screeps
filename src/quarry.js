@@ -223,112 +223,6 @@ Quarry.prototype.pathIndexOf = function(pos) {
     return -1;
 }
 Quarry.prototype.resolveCarriers = function() {
-    let carriers = this.carriers;
-    let creeps = [];
-
-    // build an array of carriers on the path
-    // move any carriers not on the path to the path
-    carriers.forEach(creep => {
-        // TODO: optimize by remembering last path index and starting from there
-        let pi = this.pathIndexOf(creep.pos);
-        creep.pathIndex = pi;
-        if (pi < 0) {
-            // attempt to move to source, we'll probably hit the path along the way, but we'll eventually get there
-            let p = this.path.path[0];
-            creep.moveTo(new RoomPosition(p.x, p.y, p.roomName));
-            console.log("moving to source");
-        }
-        else {
-            creeps.push(creep);
-        }
-    })
-
-    // sort on-path carriers so that upstream is at the top
-    creeps.sort((a,b) => b.pathIndex - a.pathIndex);
-
-    // get the constructor and remaining capacity
-    let cx = this.construct;
-
-    // find all carriers who can transfer energy to a downstream carrier
-    // or to the constructor
-    creeps.forEach((creep, i) => {
-        if (creep.carry.energy === 0)
-            return;
-        // try to transfer to constructor
-        if (cx) {
-            let cxcap = cx.carryCapacity - _.sum(cx.carry);
-            // the maximum allowed to transfer will be the minimum of the capacity before and after this tick's transfers
-            cxcap = Math.min(cxcap, cxcap + (cx.credit||0));
-            if (cxcap && cx.pos.getRangeTo(creep.pos) <= 1) {
-                let amount = Math.min(cxcap, creep.carry.energy);
-                if (OK === creep.transfer(cx, RESOURCE_ENERGY, amount)) {
-                    creep.credit = (creep.credit||0) - amount;
-                    cx.credit = (cx.credit||0) + amount;
-                    return; // can only transfer to one thing per tick
-                }
-            }
-        }
-        // try to transfer to downstream creep
-        let dscreep = creeps[i + 1];
-        if (dscreep) {
-            let dscap = dscreep.carryCapacity - creep.carry.energy;
-            // the maximum allowed to transfer will be the minimum of the capacity before and after this tick's transfers
-            dscap = Math.min(dscap, dscap + (dscreep.credit||0));
-            if (dscap && creep.pos.getRangeTo(dscreep.pos) <= 1) {
-                let amount = Math.min(dscap, creep.carry.energy);
-                if (OK === creep.transfer(dscreep, RESOURCE_ENERGY, amount)) {
-                    creep.credit = (creep.credit||0) - amount;
-                    dscreep.credit = (dscreep.credit||0) + amount;
-                    return; // can only transfer to one thing per tick
-                }
-            }
-        }
-    })
-
-    // move all carriers along path according to their carry contents after the transfers
-    creeps.forEach(creep => {
-        let carry = creep.carry.energy + (creep.credit||0);
-        let pathIndex = creep.pathIndex;
-        let origin = creep.pos;
-        if (carry == 0) {
-            if (pathIndex > 0) {
-                let d = this.path.path[pathIndex - 1];
-                let dest = new RoomPosition(d.x, d.y, d.roomName);
-                let direction = getDirection(origin, dest);
-                creep.move(direction);
-            }
-            else {
-                let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
-                let resource = resources && resources[0];
-                if (resource) {
-                    creep.pickup(resource);
-                }
-            }
-        }
-        else if (carry > 0) {
-            if (pathIndex < (this.path.path.length - 1)) {
-                let d = this.path.path[pathIndex + 1];
-                let dest = new RoomPosition(d.x, d.y, d.roomName);
-                let direction = getDirection(origin, dest);
-                creep.move(direction);
-            }
-            else {
-                for (let resourceType in creep.carry) {
-                    let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter:
-                        s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity)
-                        || (s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity),
-                    });
-                    let container = containers && containers[0];
-                    if (container) {
-                        creep.transfer(container, resourceType);
-                    }
-                    else {
-                        creep.drop(resourceType);
-                    }
-                }
-            }
-        }
-    });
 
 }
 Quarry.prototype.load = function(creep) {
@@ -562,10 +456,104 @@ const QuarrySector = {
         quarry.employ(creep);
     },
     resolve: function() {
+        let creeps = [];
         for (let quarryName in quarryTeams) {
             const quarry = quarryTeams[quarryName];
-            quarry.resolveCarriers();
+
+            // build an array of carriers on the path
+            quarry.carriers.forEach(creep => {
+                // TODO: optimize by remembering last path index and starting from there
+                creep.quarry = quarry;
+                let pi = quarry.pathIndexOf(creep.pos);
+                creep.pathIndex = pi;
+                if (pi < 0) {
+                    // attempt to move to source, we'll probably hit the path along the way, but we'll eventually get there
+                    let p = this.path.path[0];
+                    creep.moveTo(new RoomPosition(p.x, p.y, p.roomName));
+                }
+                else {
+                    creeps.push(creep);
+                }
+            })
         }
+
+        // get the constructor and remaining capacity
+        let cx = this.construct;
+
+        // first try to transfer all energy downstream
+        creeps.forEach(creep => {
+            let carry = creep.carry.energy;
+            let pathIndex = creep.pathIndex;
+            if (carry > 0) {
+                if (pathIndex == 0) {
+                    let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+                    let resource = resources && resources[0];
+                    if (resource) {
+                        creep.pickup(resource);
+                    }
+                }
+                if (pathIndex < (this.path.path.length - 1)) {
+                    // not at end, see where we should move next
+                    let d = this.path.path[pathIndex + 1];
+                    let dest = new RoomPosition(d.x, d.y, d.roomName);
+                    // if there is already a carrier there, give him our stuff
+                    let dcreep = dest.lookFor(LOOK_CREEPS);
+                    if (dcreep && dcreep.quarry && (dcreep.carryCapacity - dcreep.carry.energy) > 0) {
+                        let amount = Math.min(carry, dcreep.carryCapacity - dcreep.carry.energy);
+                        creep.transfer(dcreep, RESOURCE_ENERGY, amount);
+                        creep.credit = (creep.credit||0) - amount;
+                        dcreep.credit = (dcreep.credit||0) + amount;
+                    }
+                }
+                else {
+                    for (let resourceType in creep.carry) {
+                        let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter:
+                            s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity)
+                            || (s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity),
+                        });
+                        let container = containers && containers[0];
+                        if (container) {
+                            let cap = ((container.energyCapacity||0) - (container.energy||0)) + (container.store||0) && (container.storeCapacity - _.sum(container.store))
+                            let amount = Math.min(carry, cap);
+                            creep.transfer(container, resourceType, amount);
+                            creep.credit = (creep.credit||0) - amount;
+                        }
+                        else {
+                            creep.drop(resourceType);
+                            creep.credit = -carry;
+                        }
+                    }
+                }
+            }
+        })
+
+        // then try to move any energy downstream
+        creeps.forEach(creep => {
+            let carry = creep.carry.energy + (creep.credit||0);
+            let pathIndex = creep.pathIndex;
+            if (carry > 0) {
+                if (pathIndex < (this.path.path.length - 1)) {
+                    let d = this.path.path[pathIndex + 1];
+                    let dest = new RoomPosition(d.x, d.y, d.roomName);
+                    let direction = getDirection(creep.pos, dest);
+                    creep.move(direction);
+                }
+            }
+        })
+
+        // now try to move all empty creeps upstream
+        creeps.forEach(creep => {
+            let carry = creep.carry.energy + (creep.credit||0);
+            let pathIndex = creep.pathIndex;
+            if (carry <= 0) {
+                if (pathIndex > 0) {
+                    let d = this.path.path[pathIndex - 1];
+                    let dest = new RoomPosition(d.x, d.y, d.roomName);
+                    let direction = getDirection(creep.pos, dest);
+                    creep.move(direction);
+                }
+            }
+        })
     },
     request: function(makeRequest) {
         for (let name in quarryTeams) {
