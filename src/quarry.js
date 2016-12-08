@@ -242,6 +242,9 @@ Quarry.prototype.employConstructor = function(creep) {
         if (road.type === "constructionSite") {
             //creep.say('CS');
             // if it is still a construction site, start building it
+            let position = findBuildPositionFor(loc, path) || loc;
+            if (creep.pos.getRangeTo(position) > 0)
+                creep.moveTo(position);
             creep.build(road.constructionSite);
         }
         else {
