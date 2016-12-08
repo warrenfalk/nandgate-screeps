@@ -140,6 +140,11 @@ module.exports.loop = function () {
             continue;
         }
     }
+
+    for (let sectorName in sectors) {
+        let sector = sectors[sectorName];
+        sector.resolve && sector.resolve();
+    }
     
     for (let name in Game.rooms) {
         let room = Game.rooms[name];

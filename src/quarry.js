@@ -390,6 +390,8 @@ const QuarrySector = {
                 console.log("Quarry",name,"is paused");
                 continue;
             }
+            const haveCarry = quarry.carriers.reduce((a,v) => a + v.getActiveBodyparts(CARRY), 0);
+            const desiredCarry = quarry.calcDesiredCarryParts();
             if (!quarry.miner) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
@@ -400,12 +402,13 @@ const QuarrySector = {
                 else
                     recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE], max: 1200})
             }
-            console.log(quarry.flag.name, quarry.miner && quarry.miner.name, quarry.construct && quarry.construct.name);
-            /*
-            else if ((quarry.carriers.length * 2) < quarry.calcDesiredCarryParts()) {
-                recruit(quarry, makeRequest, 'carrier', {assembly: [CARRY,CARRY,MOVE,MOVE]})
+            else if (haveCarry < desiredCarry) {
+                let need = Math.max(2, desiredCarry - haveCarry);
+                let maxCost = 100 * need;
+                console.log(quarry.flag.name, "would request carry parts", need, "totalling", maxCost);
+                //recruit(quarry, makeRequest, 'carrier', {parts: [CARRY,MOVE], max: maxCost})
             }
-            */
+            console.log(quarry.flag.name, quarry.miner && quarry.miner.name, quarry.construct && quarry.construct.name);
         }
     },
 }
