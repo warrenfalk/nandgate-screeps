@@ -229,9 +229,10 @@ Quarry.prototype.employConstructor = function(creep) {
             //creep.say('NR');
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
-            if (result === ERR_INVALID_TARGET)
+            if (result === ERR_INVALID_TARGET) {
                 this.advanceConstructor(creep);
-            return;
+                return;
+            }
         }
         if (creep.pos.getRangeTo(loc) > 3 || creep.pos.roomName != loc.roomName) {
             //creep.say('MV');
