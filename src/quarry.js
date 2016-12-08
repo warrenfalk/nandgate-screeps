@@ -490,8 +490,9 @@ const QuarrySector = {
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     // if there is already a carrier there, give him our stuff
                     let dcreep = dest.lookFor(LOOK_CREEPS);
-                    if (dcreep && dcreep.quarry && (dcreep.carryCapacity - dcreep.carry.energy) > 0) {
-                        let amount = Math.min(carry, dcreep.carryCapacity - dcreep.carry.energy);
+                    let capacity = dcreep && dcreep.quarry && dcreep.carryCapacity - dcreep.carry.energy
+                    if (capacity) {
+                        let amount = Math.min(carry, capacity);
                         creep.transfer(dcreep, RESOURCE_ENERGY, amount);
                         creep.credit = (creep.credit||0) - amount;
                         dcreep.credit = (dcreep.credit||0) + amount;
