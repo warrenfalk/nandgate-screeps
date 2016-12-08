@@ -143,6 +143,12 @@ const Miners = {
                 if (links.length)
                     creep.transfer(links && links[0], RESOURCE_ENERGY);
             }
+
+            let drops = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+            let drop = drops && drops[0];
+            if (drop) {
+                creep.pickup(drop);
+            }
         }
         // if I am next to storage and a link, then always transfer from the link to storage if possible
         /*
