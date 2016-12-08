@@ -470,8 +470,9 @@ const QuarrySector = {
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
             if (carry > 0) {
+                // but first transfer to any nearby constructor
                 let cx = creep.quarry.construct;
-                let cxcap = cx && ((cx.carry.energy + (cx.credit||0)) < cx.carryCapacity);
+                let cxcap = cx && (cx.carryCapacity - (cx.carry.energy + (cx.credit||0)));
                 if (cxcap && creep.pos.getRangeTo(cx) <= 1) {
                     let amount = Math.min(carry, cxcap)
                     if (OK === creep.transfer(cx, RESOURCE_ENERGY, amount))
