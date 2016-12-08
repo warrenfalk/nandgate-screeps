@@ -226,18 +226,21 @@ Quarry.prototype.employConstructor = function(creep) {
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
         let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
+            creep.say('NR');
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
             if (result === ERR_INVALID_TARGET)
                 this.advanceConstructor(creep);
         }
         else if (road.type === "constructionSite") {
+            creep.say('CS');
             // if it is still a construction site, start building it
             if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
                 creep.moveTo(road.constructionSite);
             }
         }
         else {
+            creep.say('R');
             // there is a road at the current loction
             let maxRepair = Math.min(creep.getActiveBodyparts(WORK) * 100, creep.carry.energy * 100);
             if ((road.structure.hitsMax - road.structure.hits) > 0 && (road.structure.hitsMax - road.structure.hits) <= maxRepair) {
