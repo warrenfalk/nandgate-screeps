@@ -60,8 +60,8 @@ const ReserveSector = {
             let project = projects[name];
             if (project.isPaused())
                 continue;
-            while (project.stats.ttl < project.getDesiredTtl() && unemployed.length) {
-                let creep = unemployed.pop();
+            while (project.stats.ttl < project.getDesiredTtl() && unemployed.claimer.length) {
+                let creep = unemployed.claimer.pop();
                 console.log(creep.name, "=> reserve", project.getId());
                 project.stats.ttl += creep.ticksToLive;
                 creep.memory.project = project.getId();
