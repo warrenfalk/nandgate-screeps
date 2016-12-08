@@ -297,10 +297,18 @@ Quarry.prototype.resolveCarriers = function() {
                 let direction = getDirection(origin, dest);
                 creep.move(direction);
             }
+            else {
+                let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+                let resource = resources && resources[0];
+                if (resource) {
+                    creep.pickup(resource);
+                }
+            }
         }
         else if (carry > 0) {
             if (pathIndex < (this.path.path.length - 1)) {
-                let dest = this.path.path[pathIndex + 1];
+                let d = this.path.path[pathIndex + 1];
+                let dest = new RoomPosition(d.x, d.y, d.roomName);
                 let direction = getDirection(origin, dest);
                 creep.move(direction);
             }
