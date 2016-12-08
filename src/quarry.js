@@ -483,13 +483,6 @@ const QuarrySector = {
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
             if (carry > 0) {
-                if (pathIndex == 0) {
-                    let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
-                    let resource = resources && resources[0];
-                    if (resource) {
-                        creep.pickup(resource);
-                    }
-                }
                 if (pathIndex < (path.length - 1)) {
                     // not at end, see where we should move next
                     let d = path[pathIndex + 1];
@@ -520,6 +513,15 @@ const QuarrySector = {
                             creep.drop(resourceType);
                             creep.credit = -carry;
                         }
+                    }
+                }
+            }
+            else {
+                if (pathIndex == 0) {
+                    let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+                    let resource = resources && resources[0];
+                    if (resource) {
+                        creep.pickup(resource);
                     }
                 }
             }
