@@ -521,7 +521,16 @@ const QuarrySector = {
                     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
                     let resource = resources && resources[0];
                     if (resource) {
-                        creep.pickup(resource);
+                        let amount = Math.min(_.sum(resource), creep.carryCapacity - _.sum(creep.carry));
+                        if (OK === creep.pickup(resource))
+                            creep.credit = (creep.credit||0) + amount;
+                    }
+                    let capacity = creep.carryCapacity - (_.sum(creep.carry) + (creep.credit||0));
+                    if (capacity && creep.quarry.miner && creep.quarry.miner.energy) {
+                        let amount = Math.min(capacity, creep.quarry.miner.energy)
+                        if (OK === creep.quarry.miner.transfer(creep)) {
+                            creep.credit = (creep.credit||0) + amount;
+                        }
                     }
                 }
             }
