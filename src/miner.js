@@ -134,11 +134,14 @@ const Miners = {
 
             let storages = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType === STRUCTURE_STORAGE && _.sum(s.store) < s.storeCapacity});
             let links = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_LINK});
-            if (storages.length && links.length) {
-                creep.withdraw(links && links[0], RESOURCE_ENERGY);
-            }
             if (storages.length) {
+                if (links.length)
+                    creep.withdraw(links && links[0], RESOURCE_ENERGY);
                 creep.transfer(storages && storages[0], RESOURCE_ENERGY);
+            }
+            else {
+                if (links.length)
+                    creep.transfer(links && links[0], RESOURCE_ENERGY);
             }
         }
         // if I am next to storage and a link, then always transfer from the link to storage if possible
