@@ -239,11 +239,12 @@ Quarry.prototype.employConstructor = function(creep) {
         }
         else {
             // there is a road at the current loction
-            if ((road.structure.hitsMax - road.structure.hits) > 0 && (road.structure.hitsMax - road.structure.hits) <= 100) {
+            let maxRepair = Math.min(creep.getActiveBodyparts(WORK) * 100, creep.carry.energy * 100);
+            if ((road.structure.hitsMax - road.structure.hits) > 0 && (road.structure.hitsMax - road.structure.hits) <= maxRepair) {
                 // the road needs trivial repair
                 creep.repair(road.structure);
             }
-            else if ((road.structure.hitsMax - road.structure.hits) > 100) {
+            else if ((road.structure.hitsMax - road.structure.hits) > maxRepair) {
                 // the road needs prolonged repair
                 // find a place on the map nearby but not on the road
                 // (make sure it is in the same room)
