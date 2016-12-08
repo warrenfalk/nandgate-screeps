@@ -313,7 +313,20 @@ Quarry.prototype.resolveCarriers = function() {
                 creep.move(direction);
             }
             else {
-                console.log("TODO: transfer");
+                for (let resourceType in creep.carry) {
+                    let remain = creep.carry[resourceType];
+                    let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter:
+                        s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity)
+                        || (s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity),
+                    });
+                    let container = containers && container[0];
+                    if (container) {
+                        creep.transfer(container, resourceType);
+                    }
+                    else {
+                        creep.drop(resourceType, remain);
+                    }
+                }
             }
         }
     });
