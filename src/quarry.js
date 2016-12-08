@@ -15,8 +15,8 @@ A source regnerates to 3000 E per 300 ticks
 
 
 const _ = require('lodash');
-const getDirection = require('./getDirection');
-const findClosestSpawnRoom = require('./findClosestSpawnRoom');
+const getDirection = require('getDirection');
+const findClosestSpawnRoom = require('findClosestSpawnRoom');
 
 // this returns an element of an array given an index and a length such that an ever-increasing index results in a sawtooth access pattern on the array
 // meaning that with a length of 3 and indexes of 0, 1, 2, 3, 4, 5, 6, 7,...
