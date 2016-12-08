@@ -1,49 +1,47 @@
 "use strict";
 
-const projects = {};
+const findClosestSpawnRoom = require('./lib/findClosestSpawnRoom');
 
-const unemployed = [];
+let projects;
+let unemployed;
 
 /*
 {id: "R1", room: "W23S68", fromRoom: "W23S69"}
 */
 
-function Project(def) {
-    this.def = def;
+function Reserve(flag) {
+    this.flag = flag;
     this.stats = {
         ttl: 0,
     };
 }
-Project.prototype.isPaused = function() {
-    return this.def.paused;
+Reserve.prototype.isPaused = function() {
+    return false;
 }
-Project.prototype.getId = function() {
-    return this.def.id;
+Reserve.prototype.getId = function() {
+    return this.flag.name;
 }
-Project.prototype.getSendingRoomName = function() {
-    return this.def.fromRoom;
+Reserve.prototype.getSendingRoomName = function() {
+    return findClosestSpawnRoom(this.flag.pos);
 }
-Project.prototype.getRoom = function() {
-    return this.def.room;
-}
-Project.prototype.getDesiredTtl = function() {
-    return this.def.ttl || 350;
-}
-Project.prototype.pause = function() {
-    this.def.paused = true;
-    this.paused = true;
-}
-Project.prototype.unpause = function() {
-    delete this.def.paused;
-    this.paused = false;
+Reserve.prototype.getDesiredTtl = function() {
+    return 350;
 }
 
-const Reserve = {
+const ReserveSector = {
     init: function() {
-        global.Reserve = Reserve
-        let defs = Memory.reservers||{};
-        for (var id in defs) {
-            projects[id] = new Project(defs[id]);
+        global.Reserve = ReserveSector
+        unemployed = {
+            claimer: [],
+        }
+        projects = {};
+        for (let name in Game.flags) {
+            let flag = Game.flags[name];
+            if (flag.color !== COLOR_PURPLE)
+                continue;
+            if (!/Reserve:/.test(flag.name))
+                continue;
+            projects[name] = new Reserve(flag);
         }
     },
     run: function(room) {
@@ -52,7 +50,7 @@ const Reserve = {
         let project = projects[creep.memory.project||'none'];
         if (!project) {
             delete creep.memory.project;
-            unemployed.push(creep);
+            unemployed.claimer.push(creep);
             return;
         }
         project.stats.ttl += creep.ticksToLive;
@@ -70,7 +68,7 @@ const Reserve = {
             }
             if (project.stats.ttl < project.getDesiredTtl()) {
                 console.log("reserve", project.getId(), "with", project.stats.ttl, "of", project.getDesiredTtl(), "ttl, requesting creep");
-                makeRequest(project.getSendingRoomName(), {providing:'reserve', creep: {parts:[CLAIM,MOVE,ATTACK,MOVE,MOVE,MOVE],sector:'reserve',max:880}});
+                makeRequest(project.getSendingRoomName(), {providing:'reserve', creep: {parts:[CLAIM,MOVE,MOVE],sector:'reserve',max:700}});
             }
         }
     },
@@ -85,16 +83,9 @@ const Reserve = {
         // we need to get the location of the controller in the room
         // if we have no creeps in the room, we'll need to send a scout
         // unless we've sent one previously and remembered the location
-        let controllerPos;
-        let room = Game.rooms[project.getRoom()];
-        controllerPos = room ? room.controller.pos : (Memory.controllers && Memory.controllers[project.getRoom()]);
-        if (!controllerPos) {
-            console.log("TODO: send scout");
-            return;
-        }
-        let target = new RoomPosition(controllerPos.x, controllerPos.y, controllerPos.roomName);
+        let target = project.flag.pos;
         // if we're in the right room, find invaders and kill them
-        if (target.roomName === creep.room.name) {
+        if (target.roomName === creep.room.name && (creep.getActiveBodyparts(ATTACK) || creep.getActiveBodyparts(RANGED_ATTACK))) {
             let invaders = creep.room.invaders;
             if (invaders.length) {
                 let closest = creep.pos.findClosestByRange(invaders);
@@ -118,28 +109,6 @@ const Reserve = {
             creep.reserveController(creep.room.controller);
         }
     },
-    create: function(reserveDef) {
-        let defs = Memory.reservers||{};
-        defs[reserveDef.id] = reserveDef;
-        Memory.reservers = defs;
-    },
-    list: function() {
-        let defs = Memory.reservers||{};
-        for (let name in defs) {
-            let def = defs[name];
-            console.log(name, "=>", JSON.stringify(def));
-        }
-    },
-    pause: function(id,pauseFor) {
-        let project = projects[id];
-        project.pause(pauseFor);
-        return JSON.stringify(project.def);
-    },
-    unpause: function(id) {
-        let project = projects[id];
-        project.unpause();
-        return JSON.stringify(project.def);
-    },
 };
 
-module.exports = Reserve;
+module.exports = ReserveSector;

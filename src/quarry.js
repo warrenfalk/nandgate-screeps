@@ -5,9 +5,18 @@ A quarry is a system for distant mining
 It is a miner who sits on the mine
 Carriers who ferry the energy
 And a builder who builds and maintains a road
+
+
+
+A miner can mine 2 E per WORK per tick
+A source regnerates to 3000 E per 300 ticks
 */
 
+
+
 const _ = require('lodash');
+const getDirection = require('./lib/getDirection');
+const findClosestSpawnRoom = require('./lib/findClosestSpawnRoom');
 
 // this returns an element of an array given an index and a length such that an ever-increasing index results in a sawtooth access pattern on the array
 // meaning that with a length of 3 and indexes of 0, 1, 2, 3, 4, 5, 6, 7,...
@@ -174,25 +183,6 @@ Quarry.prototype.employMiner = function(creep) {
         }
     }
 }
-function getRoomCoords(roomName) {
-    let match = /^([EW])([0-9]+)([NS])([0-9]+)$/.exec(roomName);
-    return {
-        x: (match[2]|0) * (match[1] === 'E' ? 1 : -1),
-        y: (match[4]|0) * (match[3] === 'S' ? 1 : -1),
-    }
-}
-function getDirection(originPos, destPos) {
-    if (originPos.roomName === destPos.roomName)
-        return originPos.getDirectionTo(destPos);
-    let {x:sx, y:sy} = getRoomCoords(originPos.roomName);
-    let {x:ex, y:ey} = getRoomCoords(destPos.roomName);
-    let dx = ex - sx;
-    let dy = ey - sy;
-    let adjusted = new RoomPosition(destPos.x + dx, destPos.y + dy, originPos.roomName);
-    return originPos.getDirectionTo(adjusted);
-}
-global.getRoomCoords = getRoomCoords;
-global.getDirection = getDirection;
 Quarry.prototype.employCarrier = function(creep) {
     // TODO: implement carriers, look at how ferry works for inspiration, maybe
     // make sure this also works such that carriers stay on their path and relay to each other
@@ -375,14 +365,7 @@ Quarry.prototype.findPath = function() {
     return path;
 }
 Quarry.prototype.findOrigin = function() {
-    let closest;
-    for (var spawnName in Game.spawns) {
-        let spawn = Game.spawns[spawnName];
-        let route = Game.map.findRoute(spawn.room, this.flag.pos.roomName);
-        if (!closest || closest.distance > route.length)
-            closest = {distance: route.length, room: spawn.room};
-    }
-    return closest.room.name;
+    return findClosestSpawnRoom(this.flag.pos);
 }
 Quarry.prototype.balance = function() {
     // if the constructor has no carry, then swap them
