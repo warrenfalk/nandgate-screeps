@@ -240,12 +240,12 @@ Quarry.prototype.employConstructor = function(creep) {
             }
         }
         else {
-            creep.say('R');
             // there is a road at the current loction
             let maxRepair = Math.min(creep.getActiveBodyparts(WORK) * 100, creep.carry.energy * 100);
             if ((road.structure.hitsMax - road.structure.hits) > 0 && (road.structure.hitsMax - road.structure.hits) <= maxRepair) {
                 // the road needs trivial repair
                 creep.repair(road.structure);
+                creep.say('RT');
             }
             else if ((road.structure.hitsMax - road.structure.hits) > maxRepair) {
                 // the road needs prolonged repair
@@ -256,8 +256,10 @@ Quarry.prototype.employConstructor = function(creep) {
                 if (creep.pos.getRangeTo(position) > 0)
                     creep.moveTo(position);
                 creep.repair(road.structure);
+                creep.say('RL');
             }
             else {
+                creep.say('R.');
                 // the road is there and everything is good
                 let distance = creep.pos.getRangeTo(loc);
                 if (distance > 0 && m.tries < 3) {
