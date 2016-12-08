@@ -242,7 +242,7 @@ Quarry.prototype.employConstructor = function(creep) {
         if (road.type === "constructionSite") {
             //creep.say('CS');
             // if it is still a construction site, start building it
-            creep.build(road.constructionSite));
+            creep.build(road.constructionSite);
         }
         else {
             // there is a road at the current loction
