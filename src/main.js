@@ -156,7 +156,7 @@ module.exports.loop = function () {
             continue;
         }
         let request = creepRequests && creepRequests[0];
-        if (request && room.energyAvailable >= Math.min(buildSize, request.max||buildSize)) {
+        if (request && room.energyAvailable >= Math.min(buildSize, request.max||buildSize, request.threshold||buildSize)) {
             let spawned = createCreep(spawn, buildSize, request);
             console.log("Spawned requested", spawned);
             continue;
