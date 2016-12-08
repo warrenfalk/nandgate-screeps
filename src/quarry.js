@@ -188,9 +188,8 @@ function getDirection(originPos, destPos) {
     let {ex, ey} = getRoomCoords(destPos.roomName);
     let dx = ex - sx;
     let dy = ey - sy;
-    destPos.x += (dx * 50);
-    destPos.y += (dy * 50);
-    return originPos.getDirectionTo(destPos);
+    let adjusted = new RoomPosition(destPos.x + dx, destPos.y + dy, originPos.roomName);
+    return originPos.getDirectionTo(adjusted);
 }
 global.getRoomCoords = getRoomCoords;
 global.getDirection = getDirection;
