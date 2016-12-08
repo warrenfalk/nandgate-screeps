@@ -12,7 +12,7 @@ const _ = require('lodash');
 // this returns an element of an array given an index and a length such that an ever-increasing index results in a sawtooth access pattern on the array
 // meaning that with a length of 3 and indexes of 0, 1, 2, 3, 4, 5, 6, 7,...
 // this function will return 0, 1, 2, 1, 0, 1, 2, 1,...
-const sawtooth = (index, length) => length - (1 + Math.abs(((index - 1) % ((length * 2) - 2)) - (length - 2)))
+const sawtooth = (index, length) => length - (1 + Math.abs(((Math.abs(index) - 1) % ((length * 2) - 2)) - (length - 2)))
 
 function fire(creep) {
     delete creep.memory.quarry.name;
@@ -174,10 +174,67 @@ Quarry.prototype.employMiner = function(creep) {
         }
     }
 }
+function getRoomCoords(roomName) {
+    let match = /^[EW][0-9]+[NS][0-9]+$/.exec(roomName);
+    return {
+        x: (match[2]|0) * (match[1] === 'W' ? 1 : -1),
+        y: (match[4]|0) * (match[3] === 'S' ? 1 : -1),
+    }
+}
+function getLinearDirection(originPos, destPos) {
+    if (originPos.roomName === destPos.roomName)
+        return originPos.getLinearDirection(destPos);
+    let {sx, sy} = getRoomCoords(originPos.roomName);
+    let {ex, ey} = getRoomCoords(destPos.roomName);
+    let dx = ex - sx;
+    let dy = ey - sy;
+    destPos.x += (dx * 50);
+    destPos.y += (dy * 50);
+    return originPos.getLinearDirection(destPos);
+}
+global.getLinearDirection = getLinearDirection;
 Quarry.prototype.employCarrier = function(creep) {
     // TODO: implement carriers, look at how ferry works for inspiration, maybe
     // make sure this also works such that carriers stay on their path and relay to each other
     // and also supply the constructor
+
+    // a carrier is in one of two basic modes
+    // it's either carrying energy back to base
+    // or it is returning to refill
+    // if it has energy then it is carrying it back to base
+    // if along the way it meets another carrier for its mine which is empty
+    // it transfers its contents to that carrier (and then immediately turns around)
+    let m = creep.memory.quarry;
+    let quarry = quarryTeams[m.name];
+    if (!quarry) {
+        fire(creep);
+        return;
+    }
+    let path = quarry.path.path;
+    let carry = creep.carry.energy;
+    if (carry === 0) {
+        if (m.origin === undefined) {
+            m.origin = path.length - 1;
+        }
+
+        if (m.dest === undefined) {
+            m.dest = m.origin - 1;
+        }
+
+        let destCoord = path[m.dest];
+        let destPos = new RoomPosition(destCoord.x, destCoord.y, destCoord.roomName);
+        if (creep.pos.getRangeTo(destPos) > 0) {
+            let originCoord = path[m.origin];
+            let originPos = new RoomPosition(originCoord.x, originCoord.y, originCoord.roomName);
+            if (creep.pos.getRangeTo(originPos) > 0) {
+                creep.moveTo(originPos);
+                return;
+            }
+            // we are at the origin position
+            let direction = getLinearDirection(originPos, destPos);
+            creep.move(direction);
+        }
+    }
 }
 Quarry.prototype.load = function(creep) {
     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);

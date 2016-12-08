@@ -85,12 +85,10 @@ const WorkerSector = {
         }
     },
     employ: function(creep) {
-        let goal = creep.memory.goal;
         if (creep.newGoal && creep.newGoal != creep.memory.newGoal) {
             creep.memory.goal = creep.newGoal;
             delete creep.memory.loc;
         }
-        goal = creep.memory.goal;
         switch (creep.memory.goal) {
             case 'harvest':
                 harvestGoal.work(creep);
