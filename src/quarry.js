@@ -223,9 +223,9 @@ Quarry.prototype.pathIndexOf = function(pos) {
     return -1;
 }
 Quarry.prototype.resolveCarriers = function() {
-    console.log("quarry resolve", this.flag.name);
     let carriers = this.carriers;
     let creeps = [];
+    console.log("quarry resolve", this.flag.name, carriers.length);
 
     // build an array of carriers on the path
     // move any carriers not on the path to the path
