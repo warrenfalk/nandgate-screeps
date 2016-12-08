@@ -458,6 +458,7 @@ const QuarrySector = {
     },
     resolve: function() {
         let creeps = [];
+        let quarryOf = {};
         for (let quarryName in quarryTeams) {
             const quarry = quarryTeams[quarryName];
 
@@ -465,6 +466,7 @@ const QuarrySector = {
             quarry.carriers.forEach(creep => {
                 // TODO: optimize by remembering last path index and starting from there
                 creep.quarry = quarry;
+                quarryOf[creep.name] = quarry;
                 let pi = quarry.pathIndexOf(creep.pos);
                 creep.pathIndex = pi;
                 if (pi < 0) {
@@ -490,8 +492,8 @@ const QuarrySector = {
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     // if there is already a carrier there, give him our stuff
                     let dcreep = dest.lookFor(LOOK_CREEPS);
-                    let capacity = dcreep && Memory.creeps[dcreep.name].quarry && (dcreep.carryCapacity - dcreep.carry.energy)
-                    console.log(creep.name, dcreep, capacity, Memory.creeps[dcreep.name].quarry);
+                    let capacity = dcreep && quarryOf[dcreep.name] && (dcreep.carryCapacity - dcreep.carry.energy)
+                    console.log(creep.name, dcreep, capacity, quarryOf[dcreep.name]);
                     if (capacity) {
                         let amount = Math.min(carry, capacity);
                         creep.transfer(dcreep, RESOURCE_ENERGY, amount);
