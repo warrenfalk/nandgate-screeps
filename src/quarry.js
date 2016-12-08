@@ -236,6 +236,7 @@ Quarry.prototype.resolveCarriers = function() {
             // attempt to move to source, we'll probably hit the path along the way, but we'll eventually get there
             let p = this.path.path[0];
             creep.moveTo(new RoomPosition(p.x, p.y, p.roomName));
+            console.log("moving to source");
         }
         else {
             creeps.push(creep);
