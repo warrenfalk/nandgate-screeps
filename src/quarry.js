@@ -210,31 +210,33 @@ Quarry.prototype.employCarrier = function(creep) {
         fire(creep);
         return;
     }
-    let path = quarry.path.path;
-    let carry = creep.carry.energy;
-    if (carry === 0) {
-        if (m.origin === undefined) {
-            m.origin = path.length - 1;
-        }
+    // the rest of this will be coordinated in the "resolve" action
+}
+Quarry.prototype.resolveCarriers = function() {
+    let carriers = this.carriers;
+    let path = [];
+    let creeps = [];
 
-        if (m.dest === undefined) {
-            m.dest = m.origin - 1;
+    // build an array of carriers on the path
+    // move any carriers not on the path to the path
+    carriers.forEach(creep => {
+        let pi = this.pathIndexOf(creep.pos);
+        if (pi < 0) {
+            // TODO: move to path
         }
+        else {
+            creeps.push({index: pi, creep: creep});
+            path[pi] = creep;
+        }
+    })
 
-        let destCoord = path[m.dest];
-        let destPos = new RoomPosition(destCoord.x, destCoord.y, destCoord.roomName);
-        if (creep.pos.getRangeTo(destPos) > 0) {
-            let originCoord = path[m.origin];
-            let originPos = new RoomPosition(originCoord.x, originCoord.y, originCoord.roomName);
-            if (creep.pos.getRangeTo(originPos) > 0) {
-                creep.moveTo(originPos);
-                return;
-            }
-            // we are at the origin position
-            let direction = getDirection(originPos, destPos);
-            creep.move(direction);
-        }
-    }
+    // get the constructor's location and all creeps in range
+
+    // find all carriers who can transfer energy to a downstream creep
+    // or to the constructor
+
+    // move all carriers along path according to their carry contents
+
 }
 Quarry.prototype.load = function(creep) {
     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
@@ -465,6 +467,12 @@ const QuarrySector = {
         }
 
         quarry.employ(creep);
+    },
+    resolve: function() {
+        for (let quarryName in quarryTeams) {
+            const quarry = quarryTeams[quarryName];
+            quarry.resolveCarriers();
+        }
     },
     request: function(makeRequest) {
         for (let name in quarryTeams) {
