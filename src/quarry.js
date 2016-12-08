@@ -244,6 +244,10 @@ Quarry.prototype.employConstructor = function(creep) {
             let maxRepair = Math.min(creep.getActiveBodyparts(WORK) * 100, creep.carry.energy * 100);
             let needRepair = road.structure.hitsMax - road.structure.hits;
             console.log(creep.name, "max repair", maxRepair, "need", needRepair, JSON.stringify(road.structure.pos));
+            if (creep.pos.getRangeTo(loc) > 3 || creep.pos.roomName != loc.roomName) {
+                creep.say('MV');
+                creep.moveTo(loc);
+            }
             if (needRepair > 0 && needRepair <= maxRepair) {
                 // the road needs trivial repair
                 creep.repair(road.structure);
