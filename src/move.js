@@ -3,9 +3,9 @@
  * Ideas:
  * It should be possible to cache the cost matrix for an entire room
  * Also it should be possible to cache the paths between any two points
- * That cache can be kept around for some period of time, reset every use
+ * That cache can be kept around for some period of time, timerout reset every use
  * The paths ignore creeps
- * Every creep logs on its room's ephemeral storage the coordinates it expects to be on next tick
+ * Every creep logs within its room's ephemeral storage the coordinates it expects to be on next tick
  * At the end of the round, conflicts in this list are resolved
  * The conflict can be resolved by path finding, ignoring creeps again, but also avoiding any space a creep has reserved
  * If a creep gets blocked by a structure, then
