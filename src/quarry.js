@@ -192,6 +192,7 @@ function getDirection(originPos, destPos) {
     destPos.y += (dy * 50);
     return originPos.getDirectionTo(destPos);
 }
+global.getRoomCoords = getRoomCoords;
 global.getDirection = getDirection;
 Quarry.prototype.employCarrier = function(creep) {
     // TODO: implement carriers, look at how ferry works for inspiration, maybe
