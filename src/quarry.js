@@ -184,8 +184,8 @@ function getRoomCoords(roomName) {
 function getDirection(originPos, destPos) {
     if (originPos.roomName === destPos.roomName)
         return originPos.getDirectionTo(destPos);
-    let {sx, sy} = getRoomCoords(originPos.roomName);
-    let {ex, ey} = getRoomCoords(destPos.roomName);
+    let {x:sx, y:sy} = getRoomCoords(originPos.roomName);
+    let {x:ex, y:ey} = getRoomCoords(destPos.roomName);
     let dx = ex - sx;
     let dy = ey - sy;
     let adjusted = new RoomPosition(destPos.x + dx, destPos.y + dy, originPos.roomName);
