@@ -527,9 +527,9 @@ const QuarrySector = {
                         creep.credit = (creep.credit||0) + amount;
                 }
                 let capacity = creep.carryCapacity - (_.sum(creep.carry) + (creep.credit||0));
-                console.log(creep.name, "creep.quarry.miner.energy", creep.quarry.miner.energy);
-                if (capacity && creep.quarry.miner && creep.quarry.miner.energy) {
-                    let amount = Math.min(capacity, creep.quarry.miner.energy)
+                let miner = creep.quarry.miner;
+                if (capacity && miner && miner.carry.energy) {
+                    let amount = Math.min(capacity, miner.carry.energy)
                     if (OK === creep.quarry.miner.transfer(creep)) {
                         creep.credit = (creep.credit||0) + amount;
                     }
