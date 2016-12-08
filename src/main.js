@@ -162,6 +162,7 @@ module.exports.loop = function () {
         }
     }
 
+    /*
     let link = Game.getObjectById('583776f3c176db8754bf76cb');
     let storage = Game.getObjectById('58350e6e0a19c9fa133c8ca8');
     if (link && storage) {
@@ -172,6 +173,7 @@ module.exports.loop = function () {
             others.forEach(other => other.transferEnergy(link));
         }
     }
+    */
 
     let creep = null;//Game.creeps.Molly;
     //creep.moveTo(34,20)
