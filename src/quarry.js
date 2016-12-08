@@ -517,21 +517,19 @@ const QuarrySector = {
                     }
                 }
             }
-            else {
-                if (pathIndex == 0) {
-                    let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
-                    let resource = resources && resources[0];
-                    if (resource) {
-                        let amount = Math.min(_.sum(resource), creep.carryCapacity - _.sum(creep.carry));
-                        if (OK === creep.pickup(resource))
-                            creep.credit = (creep.credit||0) + amount;
-                    }
-                    let capacity = creep.carryCapacity - (_.sum(creep.carry) + (creep.credit||0));
-                    if (capacity && creep.quarry.miner && creep.quarry.miner.energy) {
-                        let amount = Math.min(capacity, creep.quarry.miner.energy)
-                        if (OK === creep.quarry.miner.transfer(creep)) {
-                            creep.credit = (creep.credit||0) + amount;
-                        }
+            if (carry < creep.carryCapacity && pathIndex == 0) {
+                let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+                let resource = resources && resources[0];
+                if (resource) {
+                    let amount = Math.min(_.sum(resource), creep.carryCapacity - _.sum(creep.carry));
+                    if (OK === creep.pickup(resource))
+                        creep.credit = (creep.credit||0) + amount;
+                }
+                let capacity = creep.carryCapacity - (_.sum(creep.carry) + (creep.credit||0));
+                if (capacity && creep.quarry.miner && creep.quarry.miner.energy) {
+                    let amount = Math.min(capacity, creep.quarry.miner.energy)
+                    if (OK === creep.quarry.miner.transfer(creep)) {
+                        creep.credit = (creep.credit||0) + amount;
                     }
                 }
             }
@@ -542,7 +540,7 @@ const QuarrySector = {
             let carry = creep.carry.energy + (creep.credit||0);
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
-            if (carry > 0) {
+            if ((carry > 0 && pathIndex > 0) || (pathIndex == 0 && carry == creep.carryCapacity)) {
                 if (pathIndex < (path.length - 1)) {
                     let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
