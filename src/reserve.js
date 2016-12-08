@@ -83,7 +83,7 @@ const ReserveSector = {
         // we need to get the location of the controller in the room
         // if we have no creeps in the room, we'll need to send a scout
         // unless we've sent one previously and remembered the location
-        let target = project.flag.pos;
+        let target = (project.flag.room && project.flag.room.controller) || project.flag.pos;
         // if we're in the right room, find invaders and kill them
         if (target.roomName === creep.room.name && (creep.getActiveBodyparts(ATTACK) || creep.getActiveBodyparts(RANGED_ATTACK))) {
             let invaders = creep.room.invaders;
