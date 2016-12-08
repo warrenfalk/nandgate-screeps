@@ -266,7 +266,7 @@ Quarry.prototype.employConstructor = function(creep) {
             let pathIndex = sawtooth(m.index, path.length);
             let spot = path[pathIndex];
             if (pathIndex >= (path.length - 1))
-                m.complete = true;
+                this.memory.complete = true;
             loc = new RoomPosition(spot.x, spot.y, spot.roomName);
             let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
             road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
