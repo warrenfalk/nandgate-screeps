@@ -183,14 +183,14 @@ function getRoomCoords(roomName) {
 }
 function getLinearDirection(originPos, destPos) {
     if (originPos.roomName === destPos.roomName)
-        return originPos.getLinearDirection(destPos);
+        return originPos.getLinearDirectionTo(destPos);
     let {sx, sy} = getRoomCoords(originPos.roomName);
     let {ex, ey} = getRoomCoords(destPos.roomName);
     let dx = ex - sx;
     let dy = ey - sy;
     destPos.x += (dx * 50);
     destPos.y += (dy * 50);
-    return originPos.getLinearDirection(destPos);
+    return originPos.getLinearDirectionTo(destPos);
 }
 global.getLinearDirection = getLinearDirection;
 Quarry.prototype.employCarrier = function(creep) {
