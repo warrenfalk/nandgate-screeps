@@ -1,6 +1,6 @@
 "use strict";
 
-const findClosestSpawnRoom = require('./lib/findClosestSpawnRoom');
+const findClosestSpawnRoom = require('./findClosestSpawnRoom');
 
 let projects;
 let unemployed;
