@@ -131,15 +131,17 @@ const Miners = {
                         console.log("harvest mineral",result);
                 }
             }
+
+            let storages = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType === STRUCTURE_STORAGE && _.sum(s.store) < s.storeCapacity});
+            let links = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_LINK});
+            if (storages.length) {
+                creep.transfer(storages && storages[0], RESOURCE_ENERGY);
+            }
+            if (storages.length && links.length)
+                creep.withdraw(links && links[0], RESOURCE_ENERGY);
         }
         // if I am next to storage and a link, then always transfer from the link to storage if possible
-        let storages = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType === STRUCTURE_STORAGE && _.sum(s.store) < s.storeCapacity});
-        let links = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_LINK});
-        if (storages.length && links.length) {
-            creep.withdraw(links && links[0]);
-            creep.transfer(storages && storages[0]);
-        }
-        else {
+        /*
             let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
                 s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
                 || ((s.structureType === STRUCTURE_LINK) && s.energy < s.energyCapacity)});
@@ -165,6 +167,7 @@ const Miners = {
                 }
             }
         }
+        */
     },
     request: function(makeRequest) {
         for (let name in miners) {
