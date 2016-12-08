@@ -210,6 +210,7 @@ Quarry.prototype.employCarrier = function(creep) {
         fire(creep);
         return;
     }
+    console.log("quarry carrier employ", creep.name);
     // the rest of this will be coordinated in the "resolve" action
 }
 Quarry.prototype.pathIndexOf = function(pos) {
