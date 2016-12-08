@@ -248,7 +248,7 @@ Quarry.prototype.employConstructor = function(creep) {
                 creep.say('MV');
                 creep.moveTo(loc);
             }
-            if (needRepair > 0 && needRepair <= maxRepair) {
+            else if (needRepair > 0 && needRepair <= maxRepair) {
                 // the road needs trivial repair
                 creep.repair(road.structure);
                 creep.say('RT');
