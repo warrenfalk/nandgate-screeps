@@ -20,7 +20,7 @@ const Supply = {
         let storageLink = storage.pos.findClosestByRange(FIND_STRUCTURES, s => s.structureType === STRUCTURE_LINK);
         let otherLinks = room.find(FIND_STRUCTURES, s => s.structureType == STRUCTURE_LINK && s !== storageLink);
         otherLinks.forEach(link => {
-            link.transfer(storageLink, RESOURCE_ENERGY);
+            link.transferEnergy(storageLink);
         })
     },
     stats: function(creep) {
