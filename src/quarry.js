@@ -240,7 +240,6 @@ Quarry.prototype.resolveCarriers = function() {
         }
         else {
             creeps.push(creep);
-            console.log("on index", pi);
         }
     })
 
@@ -292,6 +291,7 @@ Quarry.prototype.resolveCarriers = function() {
         let pathIndex = creep.pathIndex;
         let origin = creep.pos;
         if (carry == 0) {
+            console.log("empty on index", pathIndex);
             if (pathIndex > 0) {
                 let dest = this.path.path[pathIndex - 1];
                 let direction = getDirection(origin, dest);
