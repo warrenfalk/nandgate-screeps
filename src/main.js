@@ -20,10 +20,10 @@ const sectors = {
     miner: miner,
     ferry: ferry,
     bootstrap: bootstrap,
-    reserve: reserve,
     scout: scout,
     quarry: quarry,
     supply: supply,
+    reserve: reserve,
 }
 
 let partCost = {
