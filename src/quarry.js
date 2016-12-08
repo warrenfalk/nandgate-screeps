@@ -212,30 +212,100 @@ Quarry.prototype.employCarrier = function(creep) {
     }
     // the rest of this will be coordinated in the "resolve" action
 }
+Quarry.prototype.pathIndexOf = function(pos) {
+    let path = this.path.path;
+    let length = path.length;
+    for (let i = 0; i < length; i++) {
+        let spot = path[i];
+        if (pos.x === spot.x && pos.y == spot.y && pos.roomName == spot.roomName)
+            return i;
+    }
+    return -1;
+}
 Quarry.prototype.resolveCarriers = function() {
     let carriers = this.carriers;
-    let path = [];
     let creeps = [];
 
     // build an array of carriers on the path
     // move any carriers not on the path to the path
     carriers.forEach(creep => {
+        // TODO: optimize by remembering last path index and starting from there
         let pi = this.pathIndexOf(creep.pos);
+        creep.pathIndex = pi;
         if (pi < 0) {
-            // TODO: move to path
+            // attempt to move to source, we'll probably hit the path along the way, but we'll eventually get there
+            creep.moveTo(this.path.path[0]);
         }
         else {
-            creeps.push({index: pi, creep: creep});
-            path[pi] = creep;
+            creeps.push(creep);
         }
     })
 
-    // get the constructor's location and all creeps in range
+    // sort on-path carriers so that upstream is at the top
+    creeps.sort((a,b) => b.pathIndex - a.pathIndex);
 
-    // find all carriers who can transfer energy to a downstream creep
+    // get the constructor and remaining capacity
+    let cx = this.construct;
+
+    // find all carriers who can transfer energy to a downstream carrier
     // or to the constructor
+    creeps.forEach((creep, i) => {
+        if (creep.carry.energy === 0)
+            return;
+        // try to transfer to constructor
+        if (cx) {
+            let cxcap = cx.carryCapacity - _.sum(cx.carry);
+            // the maximum allowed to transfer will be the minimum of the capacity before and after this tick's transfers
+            cxcap = Math.min(cxcap, cxcap + (cx.credit||0));
+            if (cxcap && cx.pos.getRangeTo(creep.pos) <= 1) {
+                let amount = Math.min(cxcap, creep.carry.energy);
+                if (OK === creep.transfer(cx, RESOURCE_ENERGY, amount)) {
+                    creep.credit = (creep.credit||0) - amount;
+                    cx.credit = (cx.credit||0) + amount;
+                    return; // can only transfer to one thing per tick
+                }
+            }
+        }
+        // try to transfer to downstream creep
+        let dscreep = creeps[i + 1];
+        if (dscreep) {
+            let dscap = dscreep.carryCapacity - creep.carry.energy;
+            // the maximum allowed to transfer will be the minimum of the capacity before and after this tick's transfers
+            dscap = Math.min(dscap, dscap + (dscreep.credit||0));
+            if (dscap && creep.pos.getRangeTo(dscreep.pos) <= 1) {
+                let amount = Math.min(dscap, creep.carry.energy);
+                if (OK === creep.transfer(dscreep, RESOURCE_ENERGY, amount)) {
+                    creep.credit = (creep.credit||0) - amount;
+                    dscreep.credit = (dscreep.credit||0) + amount;
+                    return; // can only transfer to one thing per tick
+                }
+            }
+        }
+    })
 
-    // move all carriers along path according to their carry contents
+    // move all carriers along path according to their carry contents after the transfers
+    creeps.forEach(creep => {
+        let carry = creep.carry.energy + (creep.credit||0);
+        let pathIndex = creep.pathIndex;
+        let origin = creep.pos;
+        if (carry == 0) {
+            if (pathIndex > 0) {
+                let dest = this.path.path[pathIndex - 1];
+                let direction = getDirection(origin, dest);
+                creep.move(direction);
+            }
+        }
+        else if (carry > 0) {
+            if (pathIndex < (this.path.path.length - 1)) {
+                let dest = this.path.path[pathIndex + 1];
+                let direction = getDirection(origin, dest);
+                creep.move(direction);
+            }
+            else {
+                console.log("TODO: transfer");
+            }
+        }
+    });
 
 }
 Quarry.prototype.load = function(creep) {
