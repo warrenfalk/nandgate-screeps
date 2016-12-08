@@ -225,7 +225,6 @@ Quarry.prototype.pathIndexOf = function(pos) {
 Quarry.prototype.resolveCarriers = function() {
     let carriers = this.carriers;
     let creeps = [];
-    console.log("quarry resolve", this.flag.name, carriers.length);
 
     // build an array of carriers on the path
     // move any carriers not on the path to the path
@@ -235,7 +234,8 @@ Quarry.prototype.resolveCarriers = function() {
         creep.pathIndex = pi;
         if (pi < 0) {
             // attempt to move to source, we'll probably hit the path along the way, but we'll eventually get there
-            creep.moveTo(this.path.path[0]);
+            let p = this.path.path[0];
+            creep.moveTo(new RoomPosition(p.x, p.y, p.roomName));
         }
         else {
             creeps.push(creep);
