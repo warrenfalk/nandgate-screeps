@@ -307,7 +307,7 @@ Quarry.prototype.findPath = function() {
                 else if (!(s.structureType === STRUCTURE_CONTAINER || (s.structureType === STRUCTURE_RAMPART && s.my)))
                     costs.set(s.pos.x, s.pos.y, 0xff);
             })
-            room.find(FIND_CONSTRUCTION_SITES, {filter: c => c.structureType === STRUCTURE_ROAD}).forEach(s => {
+            room.find(FIND_CONSTRUCTION_SITES, {filter: c => c.structureType === STRUCTURE_ROAD}).forEach(c => {
                 costs.set(c.pos.x, c.pos.y, 1); // make sure we put path through existing construciton sites
             })
             return costs;
