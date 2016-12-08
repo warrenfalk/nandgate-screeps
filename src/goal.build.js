@@ -1,5 +1,4 @@
-var Employment = require('employment');
-var selfRepair = require('self-repair');
+"use strict";
 
 function firstBuildPriority(room) {
     let buildPrio = room.memory.buildPrio;
@@ -36,7 +35,7 @@ module.exports = {
         if (!creep.room.hasWorkingTower) {
             let repair = creep.pos.findInRange(FIND_STRUCTURES, 3, {filter:
                 s => (!isWall(s) && s.hits < (s.hitsMax * 0.2))
-                || (isWall(s) && s.hits < 500)
+                || (isWall(s) && s.hits < 500),
             })
             if (repair.length) {
                 if (OK == creep.repair(repair[0]))
@@ -78,7 +77,7 @@ module.exports = {
             console.log("build result " + result);
             delete memory.loc;
         }
-   },
-   firstBuildPriority: firstBuildPriority,
-   addBuildPriority: addBuildPriority,
+    },
+    firstBuildPriority: firstBuildPriority,
+    addBuildPriority: addBuildPriority,
 };

@@ -1,3 +1,4 @@
+"use strict";
 /*
 The purpose of a tower drain is to sit outside a defender's room with some healers
 and have a tough scout enter the room to get pummeled by towers
@@ -38,7 +39,7 @@ const TowerDrainSector = {
             return;
         }
         let tdteam = tdteams[name];
-        if (tdteam) 
+        if (tdteam)
             tdteam.creep = creep;
         else {
             delete creep.memory.tdteam;

@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Ideas:
  * It should be possible to cache the cost matrix for an entire room

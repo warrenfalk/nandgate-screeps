@@ -1,3 +1,4 @@
+"use strict";
 /*
     Miner.create({id: "miner1", loc: "flag1"});
 */
@@ -37,12 +38,12 @@ Miner.prototype.getDesiredTtl = function() {
 const Miners = {
     init: function() {
         global.Miner = Miners;
-    },
-    run: function(room) {
         let minerDefs = Memory.miners||{};
         for (var id in minerDefs) {
             miners[id] = new Miner(minerDefs[id]);
         }
+    },
+    run: function(room) {
     },
     stats: function(creep) {
         let miner = miners[creep.memory.mine||'none'];
@@ -58,7 +59,7 @@ const Miners = {
         if (!miner)
             return;
         if (!creep.room.isFriendly && creep.room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
-            let invaderTtl = creep.room.invaders.reduce((ttl,invader) => ttl += (invader.ticksToLive||0), 0) || 1501;
+            let invaderTtl = creep.room.invaders.reduce((ttl,invader) => ttl + (invader.ticksToLive||0), 0) || 1501;
             if (!miner.paused) {
                 miner.pause(invaderTtl);
                 Game.notify("invader detected, pausing "+miner.def.id+" for "+invaderTtl, 0);
@@ -77,7 +78,6 @@ const Miners = {
             return;
         if (!miner.loc.pos || !miner.loc.pos.roomName)
             return;
-        let roomName = miner.loc.pos.roomName;
         /*
         if (creep.ticksToLive < 250 || creep.memory.renew) {
             let renewLoc = Game.spawns[creep.memory.renew];
@@ -132,7 +132,7 @@ const Miners = {
                 }
             }
         }
-        containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
+        let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
             s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
             || ((s.structureType === STRUCTURE_LINK) && s.energy < s.energyCapacity)});
         let dropped = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
@@ -170,7 +170,7 @@ const Miners = {
                 miner.employed++;
                 creep.memory.mine = miner.def.id;
             }
-            if (miner.ttl < miner.getDesiredTtl()) { 
+            if (miner.ttl < miner.getDesiredTtl()) {
                 let roomName = miner.def.from || Game.flags[miner.def.loc].pos.roomName;
                 console.log("miner", miner.def.id, "with", miner.ttl, "of", miner.getDesiredTtl(), "ttl, requesting creep","room:"+roomName);
                 makeRequest(roomName, {providing:'energy', creep: {parts:[WORK,WORK,MOVE,CARRY,WORK,MOVE,WORK,MOVE,WORK,MOVE],sector:'miner',max:800}});
@@ -182,7 +182,7 @@ const Miners = {
         minerDefs[minerDef.id] = minerDef;
         Memory.miners = minerDefs;
     },
-    list: function(room) {
+    list: function() {
         let all = Memory.miners||{};
         for (let name in all) {
             let minerDef = all[name];

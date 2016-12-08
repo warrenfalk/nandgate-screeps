@@ -1,3 +1,4 @@
+"use strict";
 const projects = {};
 
 const unemployed = [];
@@ -59,7 +60,7 @@ const Bootstrap = {
                 project.stats.workParts += creep.getActiveBodyparts(WORK);
                 creep.memory.project = project.getId();
             }
-            if (project.stats.workParts < desiredWorkParts) { 
+            if (project.stats.workParts < desiredWorkParts) {
                 console.log("bootstrap", project.getId(), "with", project.stats.workParts, "of", desiredWorkParts, " work, requesting creep");
                 makeRequest(project.getSendingRoomName(), {providing:'energy', creep: {parts:[WORK,CARRY,MOVE],sector:'bootstrap',max:1000}});
             }
@@ -100,9 +101,9 @@ const Bootstrap = {
                     creep.moveTo(resource);
                 return;
             }
-            let storage = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: 
+            let storage = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter:
                 s => (s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE)
-                    && (s.store[RESOURCE_ENERGY] > 0)    
+                    && (s.store[RESOURCE_ENERGY] > 0)
             });
             if (storage) {
                 let result = creep.withdraw(storage, RESOURCE_ENERGY);

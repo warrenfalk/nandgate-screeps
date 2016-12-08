@@ -1,3 +1,4 @@
+"use strict";
 module.exports = function (creep) {
     if (creep.ticksToLive < 200 || creep.memory.renew) {
         let spawns = creep.pos.findInRange(FIND_MY_STRUCTURES, 1, {filter: s => s.structureType === STRUCTURE_SPAWN});
@@ -8,7 +9,6 @@ module.exports = function (creep) {
                 creep.moveTo(spawn.pos.x, spawn.pos.y);
             else
                 creep.moveTo(Game.spawns.Alpha.pos);
-            
         }
         else {
             if (OK == spawns[0].renewCreep(creep) && creep.ticksToLive < 1000)

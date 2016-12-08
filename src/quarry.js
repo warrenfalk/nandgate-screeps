@@ -1,3 +1,4 @@
+"use strict";
 /*
 A quarry is a system for distant mining
 
@@ -12,6 +13,10 @@ const _ = require('lodash');
 // meaning that with a length of 3 and indexes of 0, 1, 2, 3, 4, 5, 6, 7,...
 // this function will return 0, 1, 2, 1, 0, 1, 2, 1,...
 const sawtooth = (index, length) => length - (1 + Math.abs(((index - 1) % ((length * 2) - 2)) - (length - 2)))
+
+function fire(creep) {
+    delete creep.memory.quarry.name;
+}
 
 function findBuildPositionFor(targetPosition, avoid) {
     let room = Game.rooms[targetPosition.roomName];
@@ -40,7 +45,7 @@ function findBuildPositionFor(targetPosition, avoid) {
                 let spot = {
                     x: x,
                     y: y,
-                    features: row[x]
+                    features: row[x],
                 }
                 spots.push(spot);
             }
@@ -176,7 +181,7 @@ Quarry.prototype.load = function(creep) {
     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
     let resource = resources && resources[0];
     if (resource) {
-        let result = creep.pickup(resource);
+        creep.pickup(resource);
     }
     else {
         if (this.miner && creep.pos.getRangeTo(this.miner))
@@ -242,7 +247,7 @@ Quarry.prototype.employConstructor = function(creep) {
             creep.moveTo(loc);
             return;
         }
-        
+
         if (road.type === "constructionSite") {
             //creep.say('CS');
             // if it is still a construction site, start building it
@@ -291,9 +296,9 @@ Quarry.prototype.employConstructor = function(creep) {
 }
 Quarry.prototype.findPath = function() {
     let origin = this.findOrigin();
-    let room = Game.rooms[origin];
+    let originRoom = Game.rooms[origin];
     // find links and storages
-    let candidates = room.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_LINK || s.structureType === STRUCTURE_STORAGE})
+    let candidates = originRoom.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_LINK || s.structureType === STRUCTURE_STORAGE})
     // get within 1 square
     candidates = candidates.map(o => ({pos: o.pos, range: 1}));
     // find path to closest
@@ -315,7 +320,7 @@ Quarry.prototype.findPath = function() {
                 costs.set(c.pos.x, c.pos.y, 1); // make sure we put path through existing construciton sites
             })
             return costs;
-        }
+        },
     })
     let path = {path: pathData.path, time: Game.time};
     return path;
@@ -335,7 +340,7 @@ Quarry.prototype.balance = function() {
     if (this.construct.getActiveBodyparts(CARRY) == 0)
         this.swap();
     // the one with the closest to 5 work parts should be the miner
-    if (Math.abs(5 - this.miner.getActiveBodyparts(WORK)) > Math.abs(5 - this.construct.getActiveBodyparts(CONSTRUCT)) && this.miner.getActiveBodyparts(CARRY) > 0)
+    if (Math.abs(5 - this.miner.getActiveBodyparts(WORK)) > Math.abs(5 - this.construct.getActiveBodyparts(WORK)) && this.miner.getActiveBodyparts(CARRY) > 0)
         this.swap();
 }
 Quarry.prototype.swap = function() {
@@ -352,7 +357,7 @@ const QuarrySector = {
         unemployed = {
             miner: [],
             carrier: [],
-            construct: []
+            construct: [],
         };
         quarryTeams = {};
         for (let name in Game.flags) {
@@ -374,7 +379,7 @@ const QuarrySector = {
             delete creep.memory.sector;
             return;
         }
-        let name = q.name;        
+        let name = q.name;
         if (!name) {
             unemployed[q.role].push(creep);
             return;
@@ -393,7 +398,7 @@ const QuarrySector = {
             return;
         let quarry = quarryTeams[name];
         if (quarry.flag.room && !quarry.flag.room.isFriendly && creep.room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
-            let invaderTtl = creep.room.invaders.reduce((ttl,invader) => ttl += (invader.ticksToLive||0), 0) || 1501;
+            let invaderTtl = creep.room.invaders.reduce((ttl,invader) => ttl + (invader.ticksToLive||0), 0) || 1501;
             if (!quarry.isPaused()) {
                 quarry.pause(invaderTtl);
                 Game.notify("invader detected, pausing "+quarry.flag.name+" for "+invaderTtl, 0);

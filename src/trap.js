@@ -1,3 +1,4 @@
+"use strict";
 module.exports = {
     run: function(flag) {
         if (!flag)
@@ -5,7 +6,7 @@ module.exports = {
         let pos = flag.pos;
         let creeps = pos.lookFor(LOOK_CREEPS).some(creep => !creep.my);
         if (creeps.length) {
-            ramparts = pos.findInRange(FIND_STRUCTURES, 2, {filter: s => s.structureType === STRUCTURE_RAMPART && s.isPublic});
+            let ramparts = pos.findInRange(FIND_STRUCTURES, 2, {filter: s => s.structureType === STRUCTURE_RAMPART && s.isPublic});
             ramparts.forEach(rampart => {
                 Game.notify("Sprung trap on invader at "+flag.name);
                 console.log("Sprung trap on invader at",flag.name);
@@ -13,7 +14,7 @@ module.exports = {
             })
         }
         else {
-            ramparts = pos.findInRange(FIND_STRUCTURES, 2, {filter: s => s.structureType === STRUCTURE_RAMPART && !s.isPublic});
+            let ramparts = pos.findInRange(FIND_STRUCTURES, 2, {filter: s => s.structureType === STRUCTURE_RAMPART && !s.isPublic});
             if (ramparts.length) {
                 console.log("Reset trap at",flag.name);
                 ramparts.forEach(rampart => {
@@ -22,5 +23,5 @@ module.exports = {
                 })
             }
         }
-    }
+    },
 };

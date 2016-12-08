@@ -1,3 +1,4 @@
+"use strict";
 // Supply sector has two goals
 // 1. Answer requests for energy at places in the room and get energy there
 // 2. Make sure excess energy gets stored

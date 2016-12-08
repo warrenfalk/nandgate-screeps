@@ -1,9 +1,5 @@
-var harvestGoal = require('goal.harvest');
+"use strict";
 var buildGoal = require('goal.build');
-var supplyGoal = require('goal.supply');
-var upgradeGoal = require('goal.upgrade');
-var towerGoal = require('goal.tower');
-var Employment = require('employment');
 var ferry = require('ferry');
 var miner = require('miner');
 var bootstrap = require('bootstrap');
@@ -39,7 +35,8 @@ let partCost = {
     [TOUGH]: 10,
 };
 
-function createCreep(spawn, energy, specs) {
+function createCreep(spawn, reqEnergy, specs) {
+    let energy = reqEnergy;
     if (specs && specs.max && specs.max < energy)
         energy = specs.max;
     if (energy > spawn.room.energyAvailable)
@@ -78,8 +75,8 @@ function createCreep(spawn, energy, specs) {
 
 module.exports.loop = function () {
     console.log("----- (testing grunt)");
-    global.build = (id) => buildGoal.addBuildPriority(room, id);
-    
+    global.build = (id) => buildGoal.addBuildPriority(Game.getObjectById('id').room, id);
+
     // Collect stats on all the rooms
     RoomStats.run();
 
@@ -90,8 +87,8 @@ module.exports.loop = function () {
     }
 
     // Run every sector
-    for (var name in Game.rooms) {
-        let room = Game.rooms[name];
+    for (let roomName in Game.rooms) {
+        let room = Game.rooms[roomName];
         Tower.run(room);
         for (let sectorName in sectors) {
             let sector = sectors[sectorName];
@@ -100,11 +97,11 @@ module.exports.loop = function () {
     }
 
     Trap.run(Game.flags.Trap1);
-    
+
     // find out whose goals completed this round
     // assign to them a provisional new job
-    for (var name in Game.creeps) {
-        let creep = Game.creeps[name];
+    for (let creepName in Game.creeps) {
+        let creep = Game.creeps[creepName];
         let sector = sectors[creep.memory.sector || 'worker'];
         if (sector) {
             sector.stats(creep);
@@ -112,11 +109,10 @@ module.exports.loop = function () {
         }
     }
     
-    for (var name in sectors) {
-        let sector = sectors[name];
+    for (let sectorName in sectors) {
+        let sector = sectors[sectorName];
         if (sector.request) {
             sector.request((roomName, request) => {
-                let providing = request.providing;
                 let room = Game.rooms[roomName];
                 if (!room) {
                     console.log("Warning, room",roomName,"not found, cannot create creep");
@@ -126,14 +122,9 @@ module.exports.loop = function () {
             })
         }
     }
-    
-    // calculate the total stored energy
-    // base the number of desired work parts based on the total stored energy
-    // so that with fewer workers to carry away and use energy, the storage builds up causing more workers until equilibrium is reached
-    let getDesiredWorkParts = (room) => 5 + Math.ceil(room.storedEnergy * 0.002);
-    
-    for (var name in Game.creeps) {
-        let creep = Game.creeps[name];
+
+    for (let creepName in Game.creeps) {
+        let creep = Game.creeps[creepName];
         let sector = sectors[creep.memory.sector || 'worker'];
         if (sector) {
             sector.employ && sector.employ(creep);
@@ -145,7 +136,7 @@ module.exports.loop = function () {
         let sector = sectors[sectorName];
         sector.resolve && sector.resolve();
     }
-    
+
     for (let name in Game.rooms) {
         let room = Game.rooms[name];
         let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN})[0];
@@ -168,9 +159,9 @@ module.exports.loop = function () {
             continue;
         }
     }
-    
-    var link = Game.getObjectById('583776f3c176db8754bf76cb');
-    var storage = Game.getObjectById('58350e6e0a19c9fa133c8ca8');
+
+    let link = Game.getObjectById('583776f3c176db8754bf76cb');
+    let storage = Game.getObjectById('58350e6e0a19c9fa133c8ca8');
     if (link && storage) {
         if (link.energy)
             link.transferEnergy(storage);
@@ -179,8 +170,8 @@ module.exports.loop = function () {
             others.forEach(other => other.transferEnergy(link));
         }
     }
-    
-    creep = null;//Game.creeps.Molly;
+
+    let creep = null;//Game.creeps.Molly;
     //creep.moveTo(34,20)
     let [ target, action ] =
         // go to flag

@@ -1,3 +1,4 @@
+"use strict";
 /*
  * Gather room stats during main loop
  */
@@ -15,23 +16,22 @@ function getStats(room) {
     room.isFriendly = room.mySpawns.length > 0;
     // create queues
     room.creepRequests = [];
-    
+
     // initialize some aggregate numbers for the generic workers
     // we should remove these when we build workers as its own sector
     room.work = 0;
 }
 
 function calcCreepStats(creep) {
-    let room = creep.room;
 }
 
 module.exports = {
     run: function() {
-        for (var name in Game.rooms) {
+        for (let name in Game.rooms) {
             let room = Game.rooms[name];
             getStats(room);
         }
-        for (var name in Game.creeps) {
+        for (let name in Game.creeps) {
             let creep = Game.creeps[name];
             calcCreepStats(creep);
         }

@@ -1,4 +1,4 @@
-var Employment = require('employment');
+"use strict";
 
 module.exports = {
     isComplete: function(creep) {
@@ -29,7 +29,5 @@ module.exports = {
         else if (result == ERR_NOT_IN_RANGE) {
             creep.moveTo(site.pos.x, site.pos.y);
         }
-        else {
-        }
-   },
+    },
 };

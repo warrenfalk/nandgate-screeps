@@ -5,8 +5,6 @@ var supplyGoal = require('goal.supply');
 var upgradeGoal = require('goal.upgrade');
 var towerGoal = require('goal.tower');
 
-const defaultGoal = 'build';
-
 function findJob(creep, room) {
     if (creep.carry.energy < creep.carryCapacity) {
         return 'harvest'
@@ -114,7 +112,7 @@ const WorkerSector = {
             case 'tower':
                 towerGoal.work(creep);
                 break;
-        }        
+        }
     },
     request: function(makeRequest) {
         for (let roomName in Game.rooms) {

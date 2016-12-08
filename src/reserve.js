@@ -1,3 +1,5 @@
+"use strict";
+
 const projects = {};
 
 const unemployed = [];
@@ -66,7 +68,7 @@ const Reserve = {
                 project.stats.ttl += creep.ticksToLive;
                 creep.memory.project = project.getId();
             }
-            if (project.stats.ttl < project.getDesiredTtl()) { 
+            if (project.stats.ttl < project.getDesiredTtl()) {
                 console.log("reserve", project.getId(), "with", project.stats.ttl, "of", project.getDesiredTtl(), "ttl, requesting creep");
                 makeRequest(project.getSendingRoomName(), {providing:'reserve', creep: {parts:[CLAIM,MOVE,ATTACK,MOVE,MOVE,MOVE],sector:'reserve',max:880}});
             }
@@ -107,10 +109,10 @@ const Reserve = {
             }
         }
         if (target.getRangeTo(creep) > 4) {
-            let result = creep.moveTo(target, {ignoreCreeps: true});
+            creep.moveTo(target, {ignoreCreeps: true});
         }
         else if (target.getRangeTo(creep) > 1) {
-            let result = creep.moveTo(target, {ignoreCreeps: false});
+            creep.moveTo(target, {ignoreCreeps: false});
         }
         else {
             creep.reserveController(creep.room.controller);
@@ -121,7 +123,7 @@ const Reserve = {
         defs[reserveDef.id] = reserveDef;
         Memory.reservers = defs;
     },
-    list: function(room) {
+    list: function() {
         let defs = Memory.reservers||{};
         for (let name in defs) {
             let def = defs[name];

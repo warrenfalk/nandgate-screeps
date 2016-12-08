@@ -1,3 +1,4 @@
+"use strict";
 const _ = require('lodash');
 
 const storageFilter = s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[RESOURCE_ENERGY] > 0)
@@ -7,15 +8,10 @@ module.exports = {
     isComplete: function(creep) {
         return _.sum(creep.carry) == creep.carryCapacity;
     },
-    preCheck: function(creep) {
-    },
     work: function(creep) {
         if (creep.spawning)
             return;
         let memory = creep.memory;
-
-        let carry = _.sum(creep.carry);
-        let capacity = creep.carryCapacity - carry;
 
         let source;
         let sources;
@@ -87,5 +83,5 @@ module.exports = {
         else {
             console.log("What is source", source);
         }
-   }
+    },
 };

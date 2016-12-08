@@ -16,7 +16,7 @@ module.exports = {
         if (targets.length < towers.length)
             Array.prototype.push.apply(targets, room.find(FIND_MY_CREEPS, {filter: s => (s.hitsMax - s.hits) >= 400}))
         if (targets.length < towers.length)
-            Array.prototype.push.apply(targets, sortByHits(room.find(FIND_STRUCTURES, 
+            Array.prototype.push.apply(targets, sortByHits(room.find(FIND_STRUCTURES,
             {filter: s => (getHitGoal(s) - s.hits) >= 800}
         )))
         towers.forEach(tower => {
@@ -38,5 +38,5 @@ module.exports = {
                     console.log("tower.repair() ==", result);
             }
         });
-    }
+    },
 };

@@ -1,4 +1,4 @@
-var selfRepair = require('self-repair');
+"use strict";
 var _ = require('lodash');
 
 let routes = {};
@@ -98,7 +98,7 @@ const Ferry = {
                 // we are carrying, drop everything into available structures
                 for (let resourceType in creep.carry) {
                     let remain = creep.carry[resourceType];
-                    containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
+                    let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: 
                         s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity)
                         || (s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity)
                     });
@@ -131,14 +131,14 @@ const Ferry = {
                 }
             }
         }
-        else if (creep.pos.x == route.loadPos.x && creep.pos.y == route.loadPos.y && (!route.loadPos.room || route.loadPos.room == room.name)) {
+        else if (creep.pos.x == route.loadPos.x && creep.pos.y == route.loadPos.y && (!route.loadPos.room || route.loadPos.room == creep.room.name)) {
             // we are at the load position
             if (carry < creep.carryCapacity) {
                 // we are not full, fill us up
                 let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
                 let resource = resources && resources[0];
                 if (resource) {
-                    let result = creep.pickup(resource);
+                    creep.pickup(resource);
                     // TODO: see if the move below causes the pickup to fail
                     // if not, then enable it to move a tick sooner
                     // creep.moveTo(route.unloadPos);
@@ -163,7 +163,7 @@ const Ferry = {
                                 if (OK == creep.withdraw(container, RESOURCE_ENERGY, amount))
                                     capacity -= amount;
                             }
-                                
+
                             for (let resourceType in container.store) {
                                 let amount = Math.min(capacity, container.store[resourceType])
                                 if (OK == creep.withdraw(container, resourceType, amount))
@@ -200,7 +200,7 @@ const Ferry = {
                 route.employed++;
                 creep.memory.route = route.def.id;
             }
-            if (route.employed < route.desired) { 
+            if (route.employed < route.desired) {
                 let unloadFlag = Game.flags[route.def.unload];
                 let roomName = unloadFlag.pos.roomName;
                 console.log("route", route.def.id, "with", route.employed, "of", route.desired, "requesting creep","room:"+roomName);
@@ -213,7 +213,7 @@ const Ferry = {
         routeDefs[routeDef.id] = routeDef;
         Memory.ferryRoutes = routeDefs;
     },
-    list: function(room) {
+    list: function() {
         let all = Memory.ferryRoutes||{};
         for (let name in all) {
             let routeDef = all[name];

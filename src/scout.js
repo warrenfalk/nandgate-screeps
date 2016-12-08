@@ -1,3 +1,4 @@
+"use strict";
 const _ = require('lodash');
 
 function Scout(flag) {
@@ -21,7 +22,6 @@ const ScoutSector = {
         }
     },
     run: function(room) {
-
     },
     stats: function(creep) {
         let name = creep.memory.scout;
@@ -30,7 +30,7 @@ const ScoutSector = {
             return;
         }
         let scout = scouts[name];
-        if (scout) 
+        if (scout)
             scout.creep = creep;
         else {
             delete creep.memory.scout;
