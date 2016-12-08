@@ -319,7 +319,7 @@ Quarry.prototype.resolveCarriers = function() {
                         s => ((s.structureType === STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && s.store[resourceType] < s.storeCapacity)
                         || (s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity),
                     });
-                    let container = containers && container[0];
+                    let container = containers && containers[0];
                     if (container) {
                         creep.transfer(container, resourceType);
                     }
