@@ -155,8 +155,9 @@ module.exports.loop = function () {
             console.log("Spawned manual", spawned);
             continue;
         }
-        if (creepRequests.length) {
-            let spawned = createCreep(spawn, buildSize, creepRequests[0]);
+        let request = creepRequests && creepRequests[0];
+        if (request && room.energyAvailable >= Math.min(buildSize, request.max||buildSize)) {
+            let spawned = createCreep(spawn, buildSize, request);
             console.log("Spawned requested", spawned);
             continue;
         }
@@ -175,7 +176,10 @@ module.exports.loop = function () {
     }
     */
 
-    let creep = null;//Game.creeps.Molly;
+    const link = Game.getObjectById('5849b522fa8ba91d3d47be0c');
+    const storage  = Game.getObjectById('58350e6e0a19c9fa133c8ca8');
+
+    let creep = Game.creeps.Evelyn;
     //creep.moveTo(34,20)
     let [ target, action ] =
         // go to flag
@@ -185,7 +189,7 @@ module.exports.loop = function () {
         // container1
         //[Game.getObjectById('5832539aa617dc852ec3c194'), (creep, target) => creep.withdraw(target, RESOURCE_ENERGY)];
         // withdraw energy
-        [Game.getObjectById('58337ecd8c86a0e61a1a4f42'), (creep, target) => creep.withdraw(target, RESOURCE_ENERGY)];
+        //[Game.getObjectById('58337ecd8c86a0e61a1a4f42'), (creep, target) => creep.withdraw(target, RESOURCE_ENERGY)];
         // extension 4
         //[Game.getObjectById('583207c551ac170e71ce1a0d'), (creep, target) => creep.transfer(target, RESOURCE_ENERGY)];
         // extension 3
@@ -201,9 +205,7 @@ module.exports.loop = function () {
         //[Game.flags.M3, (creep, target) => creep.transfer(target, RESOURCE_ENERGY)];
         // build target
         //[Game.getObjectById('583b1132445866cb4ace3b21'), (creep, target) => { creep.pickup(creep.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0]); return creep.build(target) }]
-
-    if (creep && action(creep, target) !== OK)
-        creep.moveTo(target);
+        [new RoomPosition(14, 32, 'W23S69'), (creep, target) => { creep.withdraw(link, RESOURCE_ENERGY); creep.transfer(storage, RESOURCE_ENERGY); }]
 
     if (creep && action(creep, target) !== OK)
         creep.moveTo(target);
