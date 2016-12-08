@@ -468,7 +468,7 @@ const QuarrySector = {
                 creep.pathIndex = pi;
                 if (pi < 0) {
                     // attempt to move to source, we'll probably hit the path along the way, but we'll eventually get there
-                    let p = this.path.path[0];
+                    let p = quarry.path.path[0];
                     creep.moveTo(new RoomPosition(p.x, p.y, p.roomName));
                 }
                 else {
@@ -477,13 +477,11 @@ const QuarrySector = {
             })
         }
 
-        // get the constructor and remaining capacity
-        let cx = this.construct;
-
         // first try to transfer all energy downstream
         creeps.forEach(creep => {
             let carry = creep.carry.energy;
             let pathIndex = creep.pathIndex;
+            let path = creep.quarry.path.path;
             if (carry > 0) {
                 if (pathIndex == 0) {
                     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
@@ -492,9 +490,9 @@ const QuarrySector = {
                         creep.pickup(resource);
                     }
                 }
-                if (pathIndex < (this.path.path.length - 1)) {
+                if (pathIndex < (path.length - 1)) {
                     // not at end, see where we should move next
-                    let d = this.path.path[pathIndex + 1];
+                    let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     // if there is already a carrier there, give him our stuff
                     let dcreep = dest.lookFor(LOOK_CREEPS);
@@ -531,9 +529,10 @@ const QuarrySector = {
         creeps.forEach(creep => {
             let carry = creep.carry.energy + (creep.credit||0);
             let pathIndex = creep.pathIndex;
+            let path = creep.quarry.path.path;
             if (carry > 0) {
-                if (pathIndex < (this.path.path.length - 1)) {
-                    let d = this.path.path[pathIndex + 1];
+                if (pathIndex < (path.length - 1)) {
+                    let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     let direction = getDirection(creep.pos, dest);
                     creep.move(direction);
@@ -545,9 +544,10 @@ const QuarrySector = {
         creeps.forEach(creep => {
             let carry = creep.carry.energy + (creep.credit||0);
             let pathIndex = creep.pathIndex;
+            let path = creep.quarry.path.path;
             if (carry <= 0) {
                 if (pathIndex > 0) {
-                    let d = this.path.path[pathIndex - 1];
+                    let d = path[pathIndex - 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     let direction = getDirection(creep.pos, dest);
                     creep.move(direction);
