@@ -175,7 +175,9 @@ Quarry.prototype.employMiner = function(creep) {
     }
 }
 Quarry.prototype.employCarrier = function(creep) {
-
+    // TODO: implement carriers, look at how ferry works for inspiration, maybe
+    // make sure this also works such that carriers stay on their path and relay to each other
+    // and also supply the constructor
 }
 Quarry.prototype.load = function(creep) {
     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
