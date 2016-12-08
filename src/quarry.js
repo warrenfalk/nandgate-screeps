@@ -240,6 +240,7 @@ Quarry.prototype.resolveCarriers = function() {
         }
         else {
             creeps.push(creep);
+            console.log("on index", pi);
         }
     })
 
