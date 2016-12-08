@@ -470,7 +470,14 @@ const QuarrySector = {
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
             if (carry > 0) {
-                if (pathIndex < (path.length - 1)) {
+                let cx = creep.quarry.construct;
+                let cxcap = cx && ((cx.carry.energy + (cx.credit||0)) < cx.carryCapacity);
+                if (cxcap && creep.pos.getRangeTo(cx) <= 1) {
+                    let amount = Math.min(carry, cxcap)
+                    if (OK === creep.transfer(cx, RESOURCE_ENERGY, amount))
+                        cx.credit = (cx.credit||0) + amount;
+                }
+                else if (pathIndex < (path.length - 1)) {
                     // not at end, see where we should move next
                     let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
