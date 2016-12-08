@@ -226,32 +226,33 @@ Quarry.prototype.employConstructor = function(creep) {
         let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
         let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
         if (!road) {
-            creep.say('NR');
+            //creep.say('NR');
             // if there is no road, there, start the road
             let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
             if (result === ERR_INVALID_TARGET)
                 this.advanceConstructor(creep);
+            return;
         }
-        else if (road.type === "constructionSite") {
-            creep.say('CS');
+        if (creep.pos.getRangeTo(loc) > 3 || creep.pos.roomName != loc.roomName) {
+            //creep.say('MV');
+            creep.moveTo(loc);
+            return;
+        }
+        
+        if (road.type === "constructionSite") {
+            //creep.say('CS');
             // if it is still a construction site, start building it
-            if (ERR_NOT_IN_RANGE === creep.build(road.constructionSite)) {
-                creep.moveTo(road.constructionSite);
-            }
+            creep.build(road.constructionSite));
         }
         else {
             // there is a road at the current loction
             let maxRepair = Math.min(creep.getActiveBodyparts(WORK) * 100, creep.carry.energy * 100);
             let needRepair = road.structure.hitsMax - road.structure.hits;
             console.log(creep.name, "max repair", maxRepair, "need", needRepair, JSON.stringify(road.structure.pos));
-            if (creep.pos.getRangeTo(loc) > 3 || creep.pos.roomName != loc.roomName) {
-                creep.say('MV');
-                creep.moveTo(loc);
-            }
-            else if (needRepair > 0 && needRepair <= maxRepair) {
+            if (needRepair > 0 && needRepair <= maxRepair) {
                 // the road needs trivial repair
                 creep.repair(road.structure);
-                creep.say('RT');
+                //creep.say('RT');
             }
             else if (needRepair > maxRepair) {
                 // the road needs prolonged repair
@@ -262,10 +263,10 @@ Quarry.prototype.employConstructor = function(creep) {
                 if (creep.pos.getRangeTo(position) > 0)
                     creep.moveTo(position);
                 creep.repair(road.structure);
-                creep.say('RL');
+                //creep.say('RL');
             }
             else {
-                creep.say('R.');
+                //creep.say('R.');
                 // the road is there and everything is good
                 let distance = creep.pos.getRangeTo(loc);
                 if (distance > 0 && m.tries < 3) {
