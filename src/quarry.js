@@ -218,21 +218,24 @@ Quarry.prototype.employConstructor = function(creep) {
         let m = creep.memory.quarry;
         if (!m.index)
             m.index = 0;
-        let pathIndex = sawtooth(m.index, path.length);
-        let spot = path[pathIndex];
-        if (pathIndex >= (path.length - 1))
-            m.complete = true;
-        let loc = new RoomPosition(spot.x, spot.y, spot.roomName);
-        let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
-        let road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
-        if (!road) {
-            //creep.say('NR');
-            // if there is no road, there, start the road
-            let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
-            if (result === ERR_INVALID_TARGET) {
-                this.advanceConstructor(creep);
-                return;
+        let road, loc;
+        for (;;) {
+            let pathIndex = sawtooth(m.index, path.length);
+            let spot = path[pathIndex];
+            if (pathIndex >= (path.length - 1))
+                m.complete = true;
+            loc = new RoomPosition(spot.x, spot.y, spot.roomName);
+            let contents = Game.rooms[loc.roomName].lookAt(loc.x, loc.y);
+            road = contents.find(s => (s.type === "structure" && s.structure.structureType === STRUCTURE_ROAD) || (s.type === "constructionSite" && s.constructionSite.structureType === STRUCTURE_ROAD))
+            if (!road) {
+                //creep.say('NR');
+                // if there is no road, there, start the road
+                let result = Game.rooms[loc.roomName].createConstructionSite(loc.x, loc.y, STRUCTURE_ROAD);
+                if (result === ERR_INVALID_TARGET)
+                    this.advanceConstructor(creep);
+                continue;
             }
+            break;
         }
         if (creep.pos.getRangeTo(loc) > 3 || creep.pos.roomName != loc.roomName) {
             //creep.say('MV');
