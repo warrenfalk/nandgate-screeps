@@ -17,7 +17,7 @@ const Supply = {
         if (!storage)
             return;
         // find the link nearest the storage
-        let storageLink = room.pos.findClosestByRange(FIND_STRUCTURES, s => s.structureType === STRUCTURE_LINK);
+        let storageLink = storage.pos.findClosestByRange(FIND_STRUCTURES, s => s.structureType === STRUCTURE_LINK);
         let otherLinks = room.find(FIND_STRUCTURES, s => s.structureType == STRUCTURE_LINK && s !== storageLink);
         otherLinks.forEach(link => {
             link.transfer(storageLink, RESOURCE_ENERGY);
