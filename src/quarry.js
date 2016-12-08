@@ -181,18 +181,18 @@ function getRoomCoords(roomName) {
         y: (match[4]|0) * (match[3] === 'S' ? 1 : -1),
     }
 }
-function getLinearDirection(originPos, destPos) {
+function getDirection(originPos, destPos) {
     if (originPos.roomName === destPos.roomName)
-        return originPos.getLinearDirectionTo(destPos);
+        return originPos.getDirectionTo(destPos);
     let {sx, sy} = getRoomCoords(originPos.roomName);
     let {ex, ey} = getRoomCoords(destPos.roomName);
     let dx = ex - sx;
     let dy = ey - sy;
     destPos.x += (dx * 50);
     destPos.y += (dy * 50);
-    return originPos.getLinearDirectionTo(destPos);
+    return originPos.getDirectionTo(destPos);
 }
-global.getLinearDirection = getLinearDirection;
+global.getDirection = getDirection;
 Quarry.prototype.employCarrier = function(creep) {
     // TODO: implement carriers, look at how ferry works for inspiration, maybe
     // make sure this also works such that carriers stay on their path and relay to each other
@@ -231,7 +231,7 @@ Quarry.prototype.employCarrier = function(creep) {
                 return;
             }
             // we are at the origin position
-            let direction = getLinearDirection(originPos, destPos);
+            let direction = getDirection(originPos, destPos);
             creep.move(direction);
         }
     }
