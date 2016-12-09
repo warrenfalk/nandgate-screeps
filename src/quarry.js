@@ -235,9 +235,6 @@ Quarry.prototype.pathIndexOf = function(pos) {
     }
     return -1;
 }
-Quarry.prototype.resolveCarriers = function() {
-
-}
 Quarry.prototype.load = function(creep) {
     let resources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
     let resource = resources && resources[0];
@@ -561,7 +558,7 @@ const QuarrySector = {
             let carry = creep.carry.energy + (creep.credit||0);
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
-            //console.log(creep.name, , )
+            console.log(creep.name, carry/creep.carryCapacity, ((path.length - 1 - pathIndex) / (path.length - 1)))
             if ((carry/creep.carryCapacity) > ((path.length - 1 - pathIndex) / (path.length - 1))) {
                 if (pathIndex < (path.length - 1)) {
                     let d = path[pathIndex + 1];
