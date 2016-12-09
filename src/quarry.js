@@ -150,8 +150,10 @@ Quarry.prototype.stats = function(creep) {
     const role = q.role;
     switch (role) {
         case 'miner':
-            if (this.miner)
+            if (this.miner) {
+                console.log('already have miner, firing', creep.name)
                 fire(creep);
+            }
             else
                 this.miner = creep;
             break;
