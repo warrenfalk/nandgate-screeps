@@ -596,14 +596,14 @@ const QuarrySector = {
             else if (!quarry.construct && quarry.flag.room) {
                 // this quarry doesn't have a construct but we do have room access
                 if (quarry.memory.complete)
-                    recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE,MOVE]});
+                    recruit(quarry, makeRequest, 'construct', {assembly: [WORK,CARRY,MOVE]});
                 else
-                    recruit(quarry, makeRequest, 'construct', {parts: [WORK,CARRY,MOVE,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE], max: 1200})
+                    recruit(quarry, makeRequest, 'construct', {parts: [MOVE,WORK,CARRY,MOVE,WORK,WORK,MOVE,WORK,WORK,MOVE,CARRY,WORK,MOVE,CARRY,CARRY], max: 1050})
             }
             else if (haveCarry < desiredCarry) {
                 let need = Math.max(2, desiredCarry - haveCarry);
                 let maxCost = 100 * need;
-                recruit(quarry, makeRequest, 'carrier', {parts: [CARRY,MOVE], max: maxCost})
+                recruit(quarry, makeRequest, 'carrier', {parts: [MOVE,CARRY,CARRY], max: maxCost})
             }
             //console.log(quarry.flag.name, quarry.miner && quarry.miner.name, quarry.construct && quarry.construct.name);
         }

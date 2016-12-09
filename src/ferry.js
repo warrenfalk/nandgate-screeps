@@ -202,7 +202,7 @@ const Ferry = {
                 let unloadFlag = Game.flags[route.def.unload];
                 let roomName = unloadFlag.pos.roomName;
                 console.log("route", route.def.id, "with", route.employed, "of", route.desired, "requesting creep","room:"+roomName);
-                makeRequest(roomName, {providing:'energy', creep: {parts:[CARRY,MOVE],sector:'ferry',max:350}});
+                makeRequest(roomName, {providing:'energy', creep: {parts:[MOVE,CARRY,CARRY],sector:'ferry',max:350}});
             }
         }
     },
