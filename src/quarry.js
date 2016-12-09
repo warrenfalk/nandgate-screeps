@@ -14,7 +14,6 @@ A source regnerates to 3000 E per 300 ticks
 
 
 
-const _ = require('lodash');
 const getDirection = require('getDirection');
 const findClosestSpawnRoom = require('findClosestSpawnRoom');
 

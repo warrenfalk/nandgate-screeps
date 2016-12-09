@@ -2,8 +2,6 @@
 /*
     Miner.create({id: "miner1", loc: "flag1"});
 */
-const _ = require('lodash');
-
 let miners = {};
 let unemployed = [];
 

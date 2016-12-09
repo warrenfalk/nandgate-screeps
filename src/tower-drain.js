@@ -7,8 +7,6 @@ to heal him and when healed enough re-enters the room
 
 once towers are depleted, attackers can enter
 */
-const _ = require('lodash');
-
 function TowerDrain(flag) {
     this.flag = flag;
 }

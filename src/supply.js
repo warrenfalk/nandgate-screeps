@@ -4,8 +4,6 @@
 // 2. Make sure excess energy gets stored
 // Do these as efficiently as possible, storing energy where it is needed most
 
-const _ = require('lodash');
-
 const Supply = {
     init: function() {
 

@@ -1,5 +1,4 @@
 "use strict";
-const _ = require('lodash');
 
 function Scout(flag) {
     this.flag = flag;
