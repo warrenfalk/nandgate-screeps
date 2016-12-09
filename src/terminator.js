@@ -51,13 +51,14 @@ const StrikeSector = {
         }
     },
     run: function(room) {
+        let remembered = Memory.terminators.targets;
         room.invaders.filter(invader => isDangerous(invader)).forEach(invader => {
             let id = invader.id;
             if (!targets[id])
                 Game.notify("new invader "+invader.id+" "+(invader.owner && invader.owner.name)+" "+room.name+" "+JSON.stringify(invader.body), 0);
             targets[id] = {id: id, room: room.name, hostile: invader};
+            remembered[id] = {room: room.name};
         });
-        let remembered = Memory.terminators.targets;
         let forget = [];
         for (let targetId in remembered) {
             let target = remembered[targetId];
