@@ -52,9 +52,9 @@ const StrikeSector = {
     },
     run: function(room) {
         let remembered = Memory.terminators.targets;
-        room.invaders.filter(invader => isDangerous(invader)).forEach(invader => {
+        room.invaders.forEach(invader => {
             let id = invader.id;
-            if (!targets[id])
+            if (!targets[id] && isDangerous(invader))
                 Game.notify("new invader "+invader.id+" "+(invader.owner && invader.owner.name)+" "+room.name+" "+JSON.stringify(invader.body), 0);
             targets[id] = {id: id, room: room.name, hostile: invader};
             remembered[id] = {room: room.name};
@@ -80,6 +80,7 @@ const StrikeSector = {
         let targetId = memory.target;
         let target = targets[targetId];
         if (!target) {
+            Game.notify("Target "+targetId+" is no longer found", 0);
             delete memory.target;
             unemployed.push(creep);
             return;
@@ -89,33 +90,23 @@ const StrikeSector = {
     employ: function(creep) {
         let memory = getCreepMemory(creep);
         let targetId = memory.target;
-        let hostile, room;
-        if (targetId) {
-            let target = targets[targetId];
-            room = target.room;
-            hostile = target.hostile;
-        }
-        else {
-            // now kill anything remaining in the room with even non-active attack parts
-            hostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS)
-            if (!hostile) {
-                console.log(creep.name, "no hostiles");
-                return;
-            }
-        }
+        if (!targetId)
+            return;
+        let target = targets[targetId];
+        let hostile = target.hostile;
         if (hostile) {
             creep.moveTo(hostile);
             creep.attack(hostile);
         }
         else {
-            creep.moveTo(new RoomPosition(25, 25, room));
+            creep.moveTo(new RoomPosition(25, 25, target.room));
         }
         console.log("terminator",creep.name,"=>",targetId);
     },
     request: function(makeRequest) {
         for (let targetId in targets) {
             let target = targets[targetId];
-            if (!target.terminator) {
+            if (target.hostile && isDangerous(target.hostile) && !target.terminator) {
                 if (unemployed.length) {
                     let candidate = unemployed.pop();
                     assignTarget(target, candidate);
