@@ -559,7 +559,7 @@ const QuarrySector = {
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
             console.log(creep.name, carry/creep.carryCapacity, ((path.length - 1 - pathIndex) / (path.length - 1)))
-            if ((carry/creep.carryCapacity) > ((path.length - 1 - pathIndex) / (path.length - 1))) {
+            if ((carry/creep.carryCapacity) >= ((path.length - 1 - pathIndex) / (path.length - 1))) {
                 if (pathIndex < (path.length - 1)) {
                     let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
