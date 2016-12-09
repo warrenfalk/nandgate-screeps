@@ -43,6 +43,7 @@ function createCreep(spawn, reqEnergy, specs) {
         energy = specs.max;
     if (energy > spawn.room.energyAvailable)
         energy = spawn.room.energyAvailable;
+    let budget = energy;
     let assembly = specs.assembly;
     if (!assembly) {
         let partRatios = specs.parts;
@@ -66,9 +67,9 @@ function createCreep(spawn, reqEnergy, specs) {
                 parts[partType].push(partType);
             }
         }
-        assembly = parts[TOUGH].concat(parts[CLAIM], parts[HEAL], parts[ATTACK], parts[RANGED_ATTACK], parts[ATTACK], parts[WORK], parts[CARRY], parts[MOVE])
+        assembly = parts[TOUGH].concat(parts[CLAIM], parts[HEAL], parts[ATTACK], parts[RANGED_ATTACK], parts[WORK], parts[CARRY], parts[MOVE])
     }
-    console.log(JSON.stringify(assembly));
+    console.log(budget, JSON.stringify(assembly));
     let mem = specs.memory || {};
     if (specs.sector)
         mem.sector = specs.sector;
@@ -150,9 +151,12 @@ module.exports.loop = function () {
         let creepRequests = room.creepRequests;
         let buildSize =  Math.max(250, room.energyCapacityAvailable - 300);
         if (room.memory.creepRequests && room.memory.creepRequests.length) {
-            let request = room.memory.creepRequests.pop();
-            let spawned = createCreep(spawn, buildSize, request);
-            console.log("Spawned manual", spawned);
+            let request = room.memory.creepRequests[0];
+            if (room.energyAvailable >= Math.min(buildSize, (request.max||buildSize))) {
+                let request = room.memory.creepRequests.pop();
+                let spawned = createCreep(spawn, buildSize, request);
+                console.log("Spawned manual", spawned);
+            }
             continue;
         }
         let request = creepRequests && creepRequests[0];
@@ -179,7 +183,7 @@ module.exports.loop = function () {
     const link = Game.getObjectById('5849b522fa8ba91d3d47be0c');
     const storage  = Game.getObjectById('58350e6e0a19c9fa133c8ca8');
 
-    let creep = Game.creeps.Evelyn;
+    let creep = Game.creeps.Hailey;
     //creep.moveTo(34,20)
     let [ target, action ] =
         // go to flag
@@ -205,7 +209,10 @@ module.exports.loop = function () {
         //[Game.flags.M3, (creep, target) => creep.transfer(target, RESOURCE_ENERGY)];
         // build target
         //[Game.getObjectById('583b1132445866cb4ace3b21'), (creep, target) => { creep.pickup(creep.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0]); return creep.build(target) }]
-        [new RoomPosition(14, 32, 'W23S69'), (creep, target) => { creep.withdraw(link, RESOURCE_ENERGY); creep.transfer(storage, RESOURCE_ENERGY); }]
+        // enemy
+        [Game.getObjectById('5849e97fc42a6fb756bf0b9f') || new RoomPosition(26, 26, 'W24S68'), (creep, target) => creep.attack(target)];
+        //
+        //[new RoomPosition(14, 32, 'W23S69'), (creep, target) => { creep.withdraw(link, RESOURCE_ENERGY); creep.transfer(storage, RESOURCE_ENERGY); }]
 
     if (creep && action(creep, target) !== OK)
         creep.moveTo(target);
