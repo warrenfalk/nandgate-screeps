@@ -182,7 +182,7 @@ module.exports.loop = function () {
     const link = Game.getObjectById('5849b522fa8ba91d3d47be0c');
     const storage  = Game.getObjectById('58350e6e0a19c9fa133c8ca8');
 
-    let creep = Game.creeps.Hailey;
+    let creep = null;//Game.creeps.Hailey;
     //creep.moveTo(34,20)
     let [ target, action ] =
         // go to flag
@@ -216,8 +216,8 @@ module.exports.loop = function () {
     if (creep && action(creep, target) !== OK)
         creep.moveTo(target);
         
-    let creep2 = Game.creeps.Charlie;
-    creep2 && creep2.moveTo(new RoomPosition(26, 26, 'W24S69'));
+    //let creep2 = Game.creeps.Charlie;
+    //creep2 && creep2.moveTo(new RoomPosition(26, 26, 'W24S69'));
     
 
     //*/

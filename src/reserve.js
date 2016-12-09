@@ -76,8 +76,10 @@ const ReserveSector = {
         let project = projects[creep.memory.project||'none'];
         if (!project)
             return;
-        if (project.isPaused())
+        if (project.isPaused()) {
+            console.log(creep.name, "paused");
             return;
+        }
         if (creep.spawning)
             return;
         // we need to get the location of the controller in the room
