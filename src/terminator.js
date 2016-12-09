@@ -65,7 +65,6 @@ const StrikeSector = {
         })
     },
     stats: function(creep) {
-        console.log("terminator",creep.name);
         let memory = getCreepMemory(creep);
         let targetId = memory.target;
         let target = targets[targetId];
@@ -90,6 +89,8 @@ const StrikeSector = {
         else {
             creep.moveTo(new RoomPosition(25, 25, target.room));
         }
+        console.log("terminator",creep.name,"=>",targetId);
+
     },
     request: function(makeRequest) {
         for (let targetId in targets) {
