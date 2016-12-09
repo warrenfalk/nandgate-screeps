@@ -486,7 +486,6 @@ const QuarrySector = {
                     let positionId = dest.x + '.' + dest.y + '.' + dest.roomName
                     let dcreep = positions[positionId]
                     let capacity = dcreep && (dcreep.carryCapacity - dcreep.carry.energy)
-                    console.log(creep.name, dcreep, capacity);
                     if (capacity) {
                         let amount = Math.min(carry, capacity);
                         creep.transfer(dcreep, RESOURCE_ENERGY, amount);

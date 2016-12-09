@@ -8,6 +8,7 @@ var worker = require('worker');
 var scout = require('scout');
 var quarry = require('quarry');
 var supply = require('supply');
+var terminator = require('terminator');
 var RoomStats = require('room-stats');
 var Tower = require('tower');
 var Trap = require('trap');
@@ -16,6 +17,7 @@ var Trap = require('trap');
 // this is the order these are processed
 // which means this is also the priority for creep request fulfillment
 const sectors = {
+    terminator: terminator,
     worker: worker,
     miner: miner,
     ferry: ferry,
