@@ -126,9 +126,9 @@ const Miners = {
                 if (mineral) {
                     let result = creep.harvest(mineral);
                     if (result === ERR_NOT_ENOUGH_RESOURCES) {
-                        let pauseTime = mineral.ticksToRegneration - 100;
+                        let pauseTime = mineral.ticksToRegeneration - 100;
                         console.log("Out of resources, pausing", miner.def.id, "for", pauseTime);
-                        //miner.pause(Game.time + pauseTime);
+                        miner.pause(Game.time + pauseTime);
                     }
                     else if (result !== OK && result !== ERR_TIRED) {
                         console.log("harvest mineral",result);
