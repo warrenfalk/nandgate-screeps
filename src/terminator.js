@@ -13,6 +13,11 @@ we would like to also be able to unpause anything that was paused due to the inv
 let targets;
 let unemployed;
 
+function notify(message, interval) {
+    console.log(message);
+    Game.notify(message, interval);
+}
+
 function getCreepMemory(creep) {
     let memory = creep.memory.terminator;
     if (!memory)
@@ -55,7 +60,7 @@ const StrikeSector = {
         room.invaders.forEach(invader => {
             let id = invader.id;
             if (!targets[id] && isDangerous(invader))
-                Game.notify("new invader "+invader.id+" "+(invader.owner && invader.owner.name)+" "+room.name+" "+JSON.stringify(invader.body), 0);
+                notify("new invader "+invader.id+" "+(invader.owner && invader.owner.name)+" "+room.name+" "+JSON.stringify(invader.body), 0);
             targets[id] = {id: id, room: room.name, hostile: invader};
             remembered[id] = {room: room.name};
         });
@@ -71,7 +76,7 @@ const StrikeSector = {
                 forget.push(targetId);
         }
         forget.forEach(targetId => {
-            Game.notify("forget invader "+targetId, 0);
+            notify("forget invader "+targetId, 0);
             delete remembered[targetId];
         })
     },
@@ -80,7 +85,7 @@ const StrikeSector = {
         let targetId = memory.target;
         let target = targets[targetId];
         if (!target) {
-            Game.notify("Target "+targetId+" is no longer found", 0);
+            notify("Target "+targetId+" is no longer found", 0);
             delete memory.target;
             unemployed.push(creep);
             return;
