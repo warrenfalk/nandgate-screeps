@@ -96,6 +96,9 @@ function Quarry(flag) {
     this.path = path;
     this.drop = drop;
 }
+Quarry.prototype.calcMinerLatency = function() {
+    return ((this.path && this.path.path.length) || 35) + ((this.miner && this.miner.body.length * 3) || 15);
+}
 Quarry.prototype.pause = function(pauseTime) {
     if (pauseTime) {
         this.memory.pauseUntil = Game.time + pauseTime;
@@ -532,12 +535,13 @@ const QuarrySector = {
             }
         })
 
-        // then try to move any energy downstream
+        // then try to move any energy downstream and empties upstream
         creeps.forEach(creep => {
             let carry = creep.carry.energy + (creep.credit||0);
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
-            if ((carry > 0 && pathIndex > 0) || (pathIndex == 0 && carry == creep.carryCapacity)) {
+            //console.log(creep.name, , )
+            if ((carry/creep.carryCapacity) > ((path.length - 1 - pathIndex) / (path.length - 1))) {
                 if (pathIndex < (path.length - 1)) {
                     let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
@@ -545,14 +549,7 @@ const QuarrySector = {
                     creep.move(direction);
                 }
             }
-        })
-
-        // now try to move all empty creeps upstream
-        creeps.forEach(creep => {
-            let carry = creep.carry.energy + (creep.credit||0);
-            let pathIndex = creep.pathIndex;
-            let path = creep.quarry.path.path;
-            if (carry <= 0) {
+            else {
                 if (pathIndex > 0) {
                     let d = path[pathIndex - 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
@@ -571,7 +568,8 @@ const QuarrySector = {
             }
             const haveCarry = quarry.carriers.reduce((a,v) => a + v.getActiveBodyparts(CARRY), 0);
             const desiredCarry = quarry.calcDesiredCarryParts();
-            if (!quarry.miner) {
+            console.log(quarry.flag.name, "miner ttl", quarry.miner && quarry.miner.ticksToLive, quarry.calcMinerLatency())
+            if (!quarry.miner || (quarry.miner.ticksToLive < quarry.calcMinerLatency())) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct && quarry.flag.room) {
