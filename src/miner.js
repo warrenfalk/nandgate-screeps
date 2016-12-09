@@ -128,7 +128,7 @@ const Miners = {
                     if (result === ERR_NOT_ENOUGH_RESOURCES) {
                         let pauseTime = mineral.ticksToRegneration - 100;
                         console.log("Out of resources, pausing", miner.def.id, "for", pauseTime);
-                        miner.pause(Game.time + pauseTime);
+                        //miner.pause(Game.time + pauseTime);
                     }
                     else if (result !== OK && result !== ERR_TIRED) {
                         console.log("harvest mineral",result);
