@@ -76,7 +76,7 @@ const StrikeSector = {
                 forget.push(targetId);
         }
         forget.forEach(targetId => {
-            notify("forget invader "+targetId, 0);
+            //notify("forget invader "+targetId, 0);
             delete remembered[targetId];
         })
     },
