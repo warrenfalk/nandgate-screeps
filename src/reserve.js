@@ -86,7 +86,6 @@ const ReserveSector = {
         // unless we've sent one previously and remembered the location
         let target = (project.flag.room && project.flag.room.controller && project.flag.room.controller.pos) || project.flag.pos;
         // if we're in the right room, find invaders and kill them
-        console.log("RESERVE", creep.name);
         if (target.roomName === creep.room.name && (creep.getActiveBodyparts(ATTACK) || creep.getActiveBodyparts(RANGED_ATTACK))) {
             let invaders = creep.room.invaders;
             if (invaders.length) {
@@ -101,10 +100,7 @@ const ReserveSector = {
                 return;
             }
         }
-        if (target.getRangeTo(creep) > 4) {
-            creep.moveTo(target, {ignoreCreeps: true});
-        }
-        else if (target.getRangeTo(creep) > 1) {
+        if (target.getRangeTo(creep) > 1) {
             creep.moveTo(target, {ignoreCreeps: false});
         }
         else {
