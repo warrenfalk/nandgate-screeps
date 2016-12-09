@@ -73,6 +73,8 @@ const StrikeSector = {
     employ: function(creep) {
         let memory = getCreepMemory(creep);
         let targetId = memory.target;
+        if (!targetId)
+            return;
         let target = targets[targetId];
         let hostile = target.hostile;
         if (hostile) {
