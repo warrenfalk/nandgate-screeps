@@ -28,6 +28,16 @@ function assignTarget(target, creep) {
     console.log(creep, "=> terminate", target.id);
 }
 
+function isDangerous(invader) {
+    // an invader with attack parts is dangerous
+    if ((invader.getActiveBodyparts(ATTACK) + invader.getActiveBodyparts(RANGED_ATTACK)) > 0)
+        return true;
+    // an invader with work parts that gets too close is dangerous
+    if ((invader.getActiveBodyparts(WORK) > 0) && invader.pos.findInRange(FIND_MY_STRUCTURES, 8).length)
+        return true;
+    return false;
+}
+
 const StrikeSector = {
     init: function() {
         unemployed = [];
@@ -41,7 +51,7 @@ const StrikeSector = {
         }
     },
     run: function(room) {
-        room.invaders.filter(invader => (invader.getActiveBodyparts(ATTACK) + invader.getActiveBodyparts(RANGED_ATTACK)) > 0 || invader.getActiveBodyparts(WORK) > 3).forEach(invader => {
+        room.invaders.filter(invader => isDangerous(invader)).forEach(invader => {
             let id = invader.id;
             if (!targets[id])
                 Game.notify("new invader "+invader.id+" "+invader.owner+" "+room.name, 0);
