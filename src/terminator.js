@@ -41,7 +41,7 @@ const StrikeSector = {
         }
     },
     run: function(room) {
-        room.invaders.forEach(invader => {
+        room.invaders.filter(invader => (invader.getActiveBodyparts(ATTACK) + invader.getActiveBodyparts(RANGED_ATTACK)) > 0 || invader.getActiveBodyparts(WORK) > 3).forEach(invader => {
             let id = invader.id;
             if (!targets[id])
                 Game.notify("new invader "+invader.id+" "+invader.owner+" "+room.name, 0);
