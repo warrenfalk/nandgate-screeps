@@ -438,6 +438,7 @@ const QuarrySector = {
         }
         let quarry = quarryTeams[q.name];
         if (!quarry) {
+            console.log(creep.name, "=X", creep.memory.quarry.name);
             delete creep.memory.quarry.name;
             return;
         }
