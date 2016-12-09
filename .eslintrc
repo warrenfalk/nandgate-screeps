@@ -11,7 +11,6 @@
         "no-warning-comments": 1,
         "eol-last": 2,
         "no-shadow": 2,
-        "global-require": 2,
         "no-mixed-requires": 2,
         "no-path-concat": 2,
     },
@@ -29,6 +28,7 @@
         }
     },
     "globals": {
+        _: true,
         Game: true,
         RoomPosition: true,
         Memory: true,
