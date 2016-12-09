@@ -17,6 +17,7 @@ function getCreepMemory(creep) {
     let memory = creep.memory.terminator;
     if (!memory)
         creep.memory.terminator = memory = {};
+    return memory;
 }
 
 function assignTarget(target, creep) {
