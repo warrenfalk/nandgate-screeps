@@ -216,7 +216,7 @@ Quarry.prototype.employCarrier = function(creep) {
     let quarry = quarryTeams[m.name];
     if (creep.getActiveBodyparts(CARRY) === 0) {
         console.log(creep.name,"is a carrier with no CARRY, committing suicide");
-        //creep.suicide();
+        creep.suicide();
         return;
     }
     if (!quarry) {
