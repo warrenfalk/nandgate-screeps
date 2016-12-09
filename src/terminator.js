@@ -101,7 +101,7 @@ const StrikeSector = {
                 else {
                     let targetPos = (target.hostile && target.hostile.pos) || new RoomPosition(25, 25, target.room);
                     let roomName = findClosestSpawnRoom(targetPos)
-                    makeRequest(roomName, {providing:'energy', creep: {parts:[ATTACK,MOVE],sector:'miner',max:650}});
+                    makeRequest(roomName, {providing:'energy', creep: {parts:[ATTACK,MOVE],sector:'terminator',max:650}});
                 }
             }
         }
