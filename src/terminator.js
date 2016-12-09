@@ -100,7 +100,6 @@ const StrikeSector = {
             creep.moveTo(new RoomPosition(25, 25, target.room));
         }
         console.log("terminator",creep.name,"=>",targetId);
-
     },
     request: function(makeRequest) {
         for (let targetId in targets) {
