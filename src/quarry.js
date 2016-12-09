@@ -214,6 +214,11 @@ Quarry.prototype.employCarrier = function(creep) {
     // it transfers its contents to that carrier (and then immediately turns around)
     let m = creep.memory.quarry;
     let quarry = quarryTeams[m.name];
+    if (creep.getActiveBodyparts(CARRY) === 0) {
+        console.log(creep.name,"is a carrier with no CARRY, committing suicide");
+        //creep.suicide();
+        return;
+    }
     if (!quarry) {
         fire(creep);
         return;
