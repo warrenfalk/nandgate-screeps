@@ -108,10 +108,7 @@ module.exports.loop = function () {
     for (let creepName in Game.creeps) {
         let creep = Game.creeps[creepName];
         let sector = sectors[creep.memory.sector || 'worker'];
-        if (sector) {
-            sector.stats(creep);
-            continue;
-        }
+        sector && sector.stats && sector.stats(creep);
     }
     
     for (let sectorName in sectors) {
