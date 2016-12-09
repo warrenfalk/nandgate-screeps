@@ -21,7 +21,7 @@ function getCreepMemory(creep) {
 }
 
 function assignTarget(target, creep) {
-    target.creep = creep;
+    target.terminator = creep;
     let memory = getCreepMemory(creep);
     memory.target = target.id;
     memory.room = target.room;
