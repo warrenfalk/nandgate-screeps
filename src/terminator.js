@@ -58,7 +58,10 @@ const StrikeSector = {
             if (!seen.hostile)
                 forget.push(targetId);
         }
-        forget.forEach(targetId => {delete remembered[targetId]})
+        forget.forEach(targetId => {
+            Game.notify("forget invader "+targetId, 0);
+            delete remembered[targetId];
+        })
     },
     stats: function(creep) {
         console.log("terminator",creep.name);
@@ -90,7 +93,7 @@ const StrikeSector = {
     request: function(makeRequest) {
         for (let targetId in targets) {
             let target = targets[targetId];
-            if (!target.creep) {
+            if (!target.terminator) {
                 if (unemployed.length) {
                     let candidate = unemployed.pop();
                     assignTarget(target, candidate);
