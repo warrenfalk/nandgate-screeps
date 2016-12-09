@@ -100,4 +100,4 @@ const StrikeSector = {
     },
 }
 
-module.export = StrikeSector;
+module.exports = StrikeSector;
