@@ -76,6 +76,7 @@ const CARRY_EFFICIENCY = 0.85; // the carry efficiency we expect
 function Quarry(flag) {
     this.flag = flag;
     this.carriers = [];
+    this.miners = []; // including en-route replacement miners
     if (!Memory.quarry)
         Memory.quarry = {};
     if (!Memory.quarry[flag.name])
@@ -150,11 +151,8 @@ Quarry.prototype.stats = function(creep) {
     const role = q.role;
     switch (role) {
         case 'miner':
-            if (this.miner) {
-                console.log('already have miner, firing', creep.name)
-                fire(creep);
-            }
-            else
+            this.miners.push(creep);
+            if (creep.pos.getRangeTo(this.flag.pos) === 0)
                 this.miner = creep;
             break;
         case 'carrier':
@@ -592,7 +590,7 @@ const QuarrySector = {
             }
             const haveCarry = quarry.carriers.reduce((a,v) => a + v.getActiveBodyparts(CARRY), 0);
             const desiredCarry = quarry.calcDesiredCarryParts();
-            console.log(quarry.flag.name, "miner ttl", quarry.miner && quarry.miner.ticksToLive, quarry.calcMinerLatency())
+            console.log(quarry.flag.name, "miner ttl", quarry.miners && quarry.miners.reduce((m,v) => Math.max(m, v.ticksToLive), 0), quarry.calcMinerLatency())
             if (!quarry.miner || (quarry.miner.ticksToLive < quarry.calcMinerLatency())) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
