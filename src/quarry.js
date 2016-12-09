@@ -558,7 +558,7 @@ const QuarrySector = {
             let carry = creep.carry.energy + (creep.credit||0);
             let pathIndex = creep.pathIndex;
             let path = creep.quarry.path.path;
-            //console.log(creep.name, carry/creep.carryCapacity, ((path.length - 1 - pathIndex) / (path.length - 1)))
+            console.log(creep.name, carry/creep.carryCapacity, ((path.length - 1 - pathIndex) / (path.length - 1)))
             // the rules for which direction to move is based on a comparison of how full we are to how far upstream we are
             // only when fullness ration matches or exceeds upstream ratio do we move downstream
             // this avoids making a long trip with only a small amount of energy
