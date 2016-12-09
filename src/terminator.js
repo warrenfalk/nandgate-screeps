@@ -97,7 +97,7 @@ const StrikeSector = {
         }
         else {
             // now kill anything remaining in the room with even non-active attack parts
-            hostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: c => c.body.some(b => b === ATTACK || b === RANGED_ATTACK)})
+            hostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS)
             if (!hostile) {
                 console.log(creep.name, "no hostiles");
                 return;
