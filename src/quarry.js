@@ -122,6 +122,7 @@ Quarry.prototype.checkPaused = function() {
             if (this.flag.room.invaders.length === 0) {
                 delete this.memory.pauseUntil;
                 delete this.memory.invaderIds;
+                Game.notify("resuming quarry in "+this.flag.room.name+" (invaders gone)", 0);
             }
         }
     }
