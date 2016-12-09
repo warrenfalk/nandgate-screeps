@@ -217,7 +217,7 @@ module.exports.loop = function () {
         creep.moveTo(target);
         
     let creep2 = Game.creeps.Charlie;
-    creep2.moveTo(new RoomPosition(26, 26, 'W24S69'));
+    creep2 && creep2.moveTo(new RoomPosition(26, 26, 'W24S69'));
     
 
     //*/
