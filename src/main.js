@@ -80,7 +80,7 @@ function createCreep(spawn, reqEnergy, specs) {
 
 module.exports.loop = function () {
     console.log("-----");
-    console.log(sectors.terminators.stats);
+    console.log(sectors.terminator.stats);
     global.build = (id) => buildGoal.addBuildPriority(Game.getObjectById('id').room, id);
 
     // Collect stats on all the rooms
