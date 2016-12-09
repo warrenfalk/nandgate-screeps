@@ -58,6 +58,7 @@ const StrikeSector = {
         forget.forEach(targetId => {delete remembered[targetId]})
     },
     stats: function(creep) {
+        console.log("terminator",creep.name);
         let memory = getCreepMemory(creep);
         let targetId = memory.target;
         let target = targets[targetId];
