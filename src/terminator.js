@@ -25,6 +25,7 @@ function assignTarget(target, creep) {
     let memory = getCreepMemory(creep);
     memory.target = target.id;
     memory.room = target.room;
+    console.log(creep, "=> terminate", target.id);
 }
 
 const StrikeSector = {
@@ -101,6 +102,7 @@ const StrikeSector = {
                 else {
                     let targetPos = (target.hostile && target.hostile.pos) || new RoomPosition(25, 25, target.room);
                     let roomName = findClosestSpawnRoom(targetPos)
+                    console.log("Requesting creep to terminate", targetId);
                     makeRequest(roomName, {providing:'energy', creep: {parts:[ATTACK,MOVE],sector:'terminator',max:650}});
                 }
             }
