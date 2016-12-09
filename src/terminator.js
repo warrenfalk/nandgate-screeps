@@ -85,8 +85,10 @@ const StrikeSector = {
         let targetId = memory.target;
         let target = targets[targetId];
         if (!target) {
-            notify("Target "+targetId+" is no longer found", 0);
-            delete memory.target;
+            if (targetId) {
+                notify("Target "+targetId+" is no longer found", 0);
+                delete memory.target;
+            }
             unemployed.push(creep);
             return;
         }
