@@ -562,7 +562,7 @@ const QuarrySector = {
             // the rules for which direction to move is based on a comparison of how full we are to how far upstream we are
             // only when fullness ration matches or exceeds upstream ratio do we move downstream
             // this avoids making a long trip with only a small amount of energy
-            if ((carry/creep.carryCapacity) >= ((path.length - 1 - pathIndex) / (path.length - 1))) {
+            if (carry && (carry/creep.carryCapacity) >= ((path.length - 1 - pathIndex) / (path.length - 1))) {
                 if (pathIndex < (path.length - 1)) {
                     let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
