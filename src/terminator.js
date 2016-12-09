@@ -89,16 +89,24 @@ const StrikeSector = {
     employ: function(creep) {
         let memory = getCreepMemory(creep);
         let targetId = memory.target;
-        if (!targetId)
-            return;
-        let target = targets[targetId];
-        let hostile = target.hostile;
+        let hostile, room;
+        if (targetId) {
+            let target = targets[targetId];
+            room = target.room;
+            hostile = target.hostile;
+        }
+        else {
+            // now kill anything remaining in the room with even non-active attack parts
+            hostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: c => c.body.some(b => b === ATTACK || b === RANGED_ATTACK)})
+            if (!hostile)
+                return;
+        }
         if (hostile) {
             creep.moveTo(hostile);
             creep.attack(hostile);
         }
         else {
-            creep.moveTo(new RoomPosition(25, 25, target.room));
+            creep.moveTo(new RoomPosition(25, 25, room));
         }
         console.log("terminator",creep.name,"=>",targetId);
     },
