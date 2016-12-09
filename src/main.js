@@ -210,12 +210,16 @@ module.exports.loop = function () {
         // build target
         //[Game.getObjectById('583b1132445866cb4ace3b21'), (creep, target) => { creep.pickup(creep.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0]); return creep.build(target) }]
         // enemy
-        [Game.getObjectById('5849e97fc42a6fb756bf0b9f') || new RoomPosition(26, 26, 'W24S68'), (creep, target) => creep.attack(target)];
+        [Game.getObjectById('5849ffc3122d12e02d34c9fc') || new RoomPosition(26, 26, 'W24S69'), (creep, target) => creep.attack(target)];
         //
         //[new RoomPosition(14, 32, 'W23S69'), (creep, target) => { creep.withdraw(link, RESOURCE_ENERGY); creep.transfer(storage, RESOURCE_ENERGY); }]
 
     if (creep && action(creep, target) !== OK)
         creep.moveTo(target);
+        
+    let creep2 = Game.creeps.Charlie;
+    creep2.moveTo(new RoomPosition(26, 26, 'W24S69'));
+    
 
     //*/
     /*
