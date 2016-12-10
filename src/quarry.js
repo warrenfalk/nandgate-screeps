@@ -100,34 +100,25 @@ function Quarry(flag) {
 Quarry.prototype.calcMinerLatency = function() {
     return ((this.path && this.path.path.length) || 35) + ((this.miner && this.miner.body.length * 3) || 15);
 }
-Quarry.prototype.pause = function(pauseTime, invaderIds) {
-    if (pauseTime) {
-        this.memory.pauseUntil = Math.max(this.memory.pauseUntil||0, Game.time + pauseTime);
-        if (invaderIds)
-            this.memory.invaderIds = invaderIds;
-        delete this.memory.paused;
-    }
-    else {
-        this.memory.paused = true;
-        delete this.memory.pauseUntil;
-    }
+Quarry.prototype.shouldEvade = function() {
+    return this.memory.invaderIds && this.memory.invaderIds.length;
 }
-Quarry.prototype.isPaused = function() {
-    return this.memory.paused || (this.memory.pauseUntil && (this.memory.pauseUntil > Game.time))
+Quarry.prototype.shouldRecruit = function() {
+    return !(this.memory.pauseUntil && (this.memory.pauseUntil >= Game.time))
 }
-Quarry.prototype.checkPaused = function() {
-    if (this.memory.pauseUntil && this.memory.invaderIds && this.memory.invaderIds.length) {
-        // check to see if the invaders are still around
-        // if we don't have visibility to the room, we'll assume they are
-        if (this.flag.room) {
-            if (this.flag.room.invaders.length === 0) {
-                delete this.memory.pauseUntil;
-                delete this.memory.invaderIds;
-                Game.notify("resuming quarry in "+this.flag.room.name+" (invaders gone)", 0);
-            }
-        }
+Quarry.prototype.pauseForInvaders = function(invaders) {
+    let pauseTime = invaders.reduce((ttl,invader) => Math.max(ttl, (invader.ticksToLive||0)), 0);
+    let pauseUntil = Game.time + pauseTime;
+    if (pauseUntil > this.memory.pauseUntil) {
+        this.memory.pauseUntil = pauseUntil;
+        Game.notify("invader detected, pausing "+this.flag.name+" for "+pauseTime, 0);
     }
-    return this.isPaused();
+    this.memory.invaders = invaders.map(inv => inv.id);
+}
+Quarry.prototype.resumeForNoInvaders = function() {
+    delete this.memory.pauseUntil;
+    delete this.memory.invaderIds;
+    Game.notify("resuming quarry in "+this.flag.room.name+" (invaders gone)", 0);
 }
 Quarry.prototype.calcDesiredCarryParts = function() {
     // A miner can mine 2 energy per tick per WORK part
@@ -404,6 +395,20 @@ Quarry.prototype.swap = function() {
 let quarryTeams;
 let unemployed;
 
+
+Quarry.prototype.checkPaused = function() {
+    if (this.memory.pauseUntil && this.memory.invaderIds && this.memory.invaderIds.length) {
+        // check to see if the invaders are still around
+        // if we don't have visibility to the room, we'll assume they are
+        if (this.flag.room) {
+            if (this.flag.room.invaders.length === 0) {
+            }
+        }
+    }
+    return this.isPaused();
+}
+
+
 const QuarrySector = {
     init: function() {
         unemployed = {
@@ -422,7 +427,17 @@ const QuarrySector = {
         }
     },
     run: function(room) {
-
+        for (let name in quarryTeams) {
+            let quarry = quarryTeams[name];
+            if (quarry.flag.room !== room)
+                continue;
+            if (!quarry.flag.room.isFriendly && room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
+                quarry.pauseForInvaders(room.invaders);
+            }
+            else if (quarry.memory.invaders && quarry.memory.invaders.length && !room.invaders.length) {
+                quarry.resumeForNoInvaders();
+            }
+        }
     },
     stats: function(creep) {
         const q = creep.memory.quarry;
@@ -450,13 +465,6 @@ const QuarrySector = {
         if (!name)
             return;
         let quarry = quarryTeams[name];
-        if (quarry.flag.room && !quarry.flag.room.isFriendly && creep.room.invaders.some(i => i.getActiveBodyparts(ATTACK) || i.getActiveBodyparts(RANGED_ATTACK))) {
-            let invaderTtl = creep.room.invaders.reduce((ttl,invader) => Math.max(ttl, (invader.ticksToLive||0)), 0) || 1501;
-            if (!quarry.isPaused()) {
-                quarry.pause(invaderTtl, creep.room.invaders.map(inv => inv.id));
-                Game.notify("invader detected, pausing "+quarry.flag.name+" for "+invaderTtl, 0);
-            }
-        }
 
         quarry.employ(creep);
     },
@@ -584,8 +592,8 @@ const QuarrySector = {
     request: function(makeRequest) {
         for (let name in quarryTeams) {
             let quarry = quarryTeams[name];
-            if (quarry.checkPaused()) {
-                console.log("Quarry",name,"is paused");
+            if (!quarry.shouldRecruit()) {
+                console.log("Quarry",name,"recruiting is paused");
                 continue;
             }
             const haveCarry = quarry.carriers.reduce((a,v) => a + v.getActiveBodyparts(CARRY), 0);
