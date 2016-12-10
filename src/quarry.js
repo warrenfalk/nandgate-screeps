@@ -618,7 +618,7 @@ const QuarrySector = {
             const desiredCarry = quarry.calcDesiredCarryParts();
             let minerTtl = quarry.miners && quarry.miners.reduce((m,v) => Math.max(m, v.ticksToLive), 0);
             console.log(quarry.flag.name, "miner ttl", minerTtl, quarry.calcMinerLatency())
-            if (minerTtl < quarry.calcMinerLatency()) {
+            if (!minerTtl || minerTtl < quarry.calcMinerLatency()) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct && quarry.flag.room) {
