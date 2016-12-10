@@ -590,8 +590,9 @@ const QuarrySector = {
             }
             const haveCarry = quarry.carriers.reduce((a,v) => a + v.getActiveBodyparts(CARRY), 0);
             const desiredCarry = quarry.calcDesiredCarryParts();
-            console.log(quarry.flag.name, "miner ttl", quarry.miners && quarry.miners.reduce((m,v) => Math.max(m, v.ticksToLive), 0), quarry.calcMinerLatency())
-            if (!quarry.miner || (quarry.miner.ticksToLive < quarry.calcMinerLatency())) {
+            let minerTtl = quarry.miners && quarry.miners.reduce((m,v) => Math.max(m, v.ticksToLive), 0);
+            console.log(quarry.flag.name, "miner ttl", minerTtl, quarry.calcMinerLatency())
+            if (minerTtl < quarry.calcMinerLatency()) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct && quarry.flag.room) {
