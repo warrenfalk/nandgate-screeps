@@ -569,6 +569,7 @@ const QuarrySector = {
             // only when fullness ration matches or exceeds upstream ratio do we move downstream
             // this avoids making a long trip with only a small amount of energy
             let fullEnough = carry && (carry/creep.carryCapacity) >= ((path.length - 1 - pathIndex) / (path.length - 1));
+            // also if I'm barely going to live long enough to make the trip back, leave now
             let shortTimer = (path.length + 10) > creep.ticksToLive;
             if (fullEnough || shortTimer) {
                 if (pathIndex < (path.length - 1)) {
