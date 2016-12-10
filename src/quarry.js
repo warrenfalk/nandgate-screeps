@@ -576,7 +576,16 @@ const QuarrySector = {
                     let d = path[pathIndex - 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     let direction = getDirection(creep.pos, dest);
-                    creep.move(direction);
+                    if (OK === creep.move(direction)) {
+                        delete creep.memory.quarry.blocked;
+                    }
+                    else {
+                        let m = creep.memory.quarry;
+                        m.blocked = (m.blocked||0) + 1;
+                        if (m.blocked > 3) {
+                            creep.moveTo(path[path.length - 1]);
+                        }
+                    }
                 }
             }
         })
