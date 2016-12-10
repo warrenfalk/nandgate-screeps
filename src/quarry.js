@@ -576,7 +576,16 @@ const QuarrySector = {
                     let d = path[pathIndex + 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     let direction = getDirection(creep.pos, dest);
-                    creep.move(direction);
+                    if (OK === creep.move(direction)) {
+                        delete creep.memory.quarry.blocked;
+                    }
+                    else {
+                        let m = creep.memory.quarry;
+                        m.blocked = (m.blocked||0) + 1;
+                        if (m.blocked > 3) {
+                            creep.moveTo(path[0]);
+                        }
+                    }
                 }
             }
             else {
@@ -584,7 +593,16 @@ const QuarrySector = {
                     let d = path[pathIndex - 1];
                     let dest = new RoomPosition(d.x, d.y, d.roomName);
                     let direction = getDirection(creep.pos, dest);
-                    creep.move(direction);
+                    if (OK === creep.move(direction)) {
+                        delete creep.memory.quarry.blocked;
+                    }
+                    else {
+                        let m = creep.memory.quarry;
+                        m.blocked = (m.blocked||0) + 1;
+                        if (m.blocked > 3) {
+                            creep.moveTo(path[path.length - 1]);
+                        }
+                    }
                 }
             }
         })
@@ -598,8 +616,9 @@ const QuarrySector = {
             }
             const haveCarry = quarry.carriers.reduce((a,v) => a + v.getActiveBodyparts(CARRY), 0);
             const desiredCarry = quarry.calcDesiredCarryParts();
-            console.log(quarry.flag.name, "miner ttl", quarry.miners && quarry.miners.reduce((m,v) => Math.max(m, v.ticksToLive), 0), quarry.calcMinerLatency())
-            if (!quarry.miner || (quarry.miner.ticksToLive < quarry.calcMinerLatency())) {
+            let minerTtl = quarry.miners && quarry.miners.reduce((m,v) => Math.max(m, v.ticksToLive), 0);
+            console.log(quarry.flag.name, "miner ttl", minerTtl, quarry.calcMinerLatency())
+            if (minerTtl < quarry.calcMinerLatency()) {
                 recruit(quarry, makeRequest, 'miner', {max: 1000, parts: [WORK,CARRY,MOVE]});
             }
             else if (!quarry.construct && quarry.flag.room) {
