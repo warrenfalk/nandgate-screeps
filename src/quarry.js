@@ -100,9 +100,6 @@ function Quarry(flag) {
 Quarry.prototype.calcMinerLatency = function() {
     return ((this.path && this.path.path.length) || 35) + ((this.miner && this.miner.body.length * 3) || 15);
 }
-Quarry.prototype.shouldEvade = function() {
-    return this.memory.invaderIds && this.memory.invaderIds.length;
-}
 Quarry.prototype.shouldRecruit = function() {
     return !(this.memory.pauseUntil && (this.memory.pauseUntil >= Game.time))
 }
