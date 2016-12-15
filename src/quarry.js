@@ -114,7 +114,7 @@ Quarry.prototype.pauseForInvaders = function(invaders) {
 }
 Quarry.prototype.resumeForNoInvaders = function() {
     delete this.memory.pauseUntil;
-    delete this.memory.invaderIds;
+    delete this.memory.invaders;
     Game.notify("resuming quarry in "+this.flag.room.name+" (invaders gone)", 0);
 }
 Quarry.prototype.calcDesiredCarryParts = function() {
@@ -391,19 +391,6 @@ Quarry.prototype.swap = function() {
 
 let quarryTeams;
 let unemployed;
-
-
-Quarry.prototype.checkPaused = function() {
-    if (this.memory.pauseUntil && this.memory.invaderIds && this.memory.invaderIds.length) {
-        // check to see if the invaders are still around
-        // if we don't have visibility to the room, we'll assume they are
-        if (this.flag.room) {
-            if (this.flag.room.invaders.length === 0) {
-            }
-        }
-    }
-    return this.isPaused();
-}
 
 
 const QuarrySector = {
